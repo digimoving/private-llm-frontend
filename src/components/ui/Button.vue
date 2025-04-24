@@ -2,7 +2,7 @@
   <button
     :type="type"
     :class="[
-      'inline-flex items-center justify-center font-semibold shadow-xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200',
+      'inline-flex items-center justify-center font-semibold shadow-xs focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200 cursor-pointer',
       sizeClasses,
       variantClasses,
       block ? 'w-full' : 'w-auto',
