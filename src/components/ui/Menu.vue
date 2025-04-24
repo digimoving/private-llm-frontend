@@ -62,16 +62,17 @@ export interface MenuItemType {
   disabled?: boolean;
 }
 
-interface Props {
-  items: MenuItemType[];
-  icon?: FunctionalComponent;
-  ariaLabel?: string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  icon: UserCircleIcon,
-  ariaLabel: "User menu",
-});
+withDefaults(
+  defineProps<{
+    items: MenuItemType[];
+    icon?: FunctionalComponent;
+    ariaLabel?: string;
+  }>(),
+  {
+    icon: () => UserCircleIcon,
+    ariaLabel: "User menu",
+  }
+);
 
 /**
  * @param item The menu item that was clicked
