@@ -2,9 +2,10 @@
   <Menu as="div" class="relative">
     <div>
       <MenuButton
-        class="relative flex rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 cursor-pointer"
+        class="relative flex rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 cursor-pointer transition-colors duration-200"
+        :aria-label="ariaLabel"
       >
-        <span class="sr-only">Open user menu</span>
+        <span class="sr-only">{{ ariaLabel }}</span>
         <component :is="icon" class="h-6 w-6" aria-hidden="true" />
       </MenuButton>
     </div>
@@ -19,19 +20,22 @@
     >
       <MenuItems
         class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none"
+        :aria-label="ariaLabel"
       >
         <MenuItem
           v-for="(item, index) in items"
           :key="index"
-          v-slot="{ active }"
+          v-slot="{ active, disabled }"
         >
           <button
             type="button"
-            @click="item.onClick"
+            @click="handleItemClick(item)"
             :class="[
               active ? 'bg-gray-100' : '',
-              'w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 cursor-pointer',
+              'w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 cursor-pointer transition-colors duration-200',
+              disabled ? 'opacity-50 cursor-not-allowed' : '',
             ]"
+            :disabled="disabled"
           >
             <component
               :is="item.icon"
@@ -51,19 +55,33 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { UserCircleIcon } from "@heroicons/vue/24/outline";
 import type { FunctionalComponent } from "vue";
 
-interface MenuItemType {
+export interface MenuItemType {
   label: string;
   onClick?: () => void;
   icon?: FunctionalComponent;
+  disabled?: boolean;
 }
 
-const props = withDefaults(
-  defineProps<{
-    items: MenuItemType[];
-    icon?: FunctionalComponent;
-  }>(),
-  {
-    icon: UserCircleIcon,
+interface Props {
+  items: MenuItemType[];
+  icon?: FunctionalComponent;
+  ariaLabel?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  icon: UserCircleIcon,
+  ariaLabel: "User menu",
+});
+
+/**
+ * @param item The menu item that was clicked
+ */
+const handleItemClick = (item: MenuItemType) => {
+  if (item.disabled) return;
+  if (item.onClick) {
+    item.onClick();
+  } else {
+    console.warn(`Menu item "${item.label}" has no onClick handler`);
   }
-);
+};
 </script>

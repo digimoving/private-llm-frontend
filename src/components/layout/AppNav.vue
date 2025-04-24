@@ -62,7 +62,7 @@
             v-for="item in userMenuItems"
             :key="item.label"
             as="button"
-            class="flex w-full items-center rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+            class="flex w-full items-center rounded-md px-3 py-2 text-base text-gray-400 hover:bg-gray-700 hover:text-white"
             @click="item.onClick"
           >
             <component
@@ -70,7 +70,7 @@
               class="mr-3 h-5 w-5"
               aria-hidden="true"
             />
-            {{ item.label }}
+            <span class="text-white">{{ item.label }}</span>
           </DisclosureButton>
         </div>
       </div>
