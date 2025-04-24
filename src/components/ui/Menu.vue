@@ -2,10 +2,10 @@
   <Menu as="div" class="relative">
     <div>
       <MenuButton
-        class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+        class="relative flex rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 cursor-pointer"
       >
         <span class="sr-only">Open user menu</span>
-        <component :is="icon" class="size-6 text-gray-400" aria-hidden="true" />
+        <component :is="icon" class="h-6 w-6" aria-hidden="true" />
       </MenuButton>
     </div>
 
@@ -30,12 +30,12 @@
             @click="item.onClick"
             :class="[
               active ? 'bg-gray-100' : '',
-              'w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700',
+              'w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 cursor-pointer',
             ]"
           >
             <component
               :is="item.icon"
-              class="w-5 h-5 text-gray-500"
+              class="h-5 w-5 text-gray-500"
               v-if="item.icon"
             />
             {{ item.label }}
