@@ -31,6 +31,9 @@ A reusable button component with consistent variants and sizing.
 - `type` (string) — `'button' | 'submit' | 'reset'`  
   Default: `'button'`.
 
+- `loading` (boolean) — optional
+  Shows loading spinner when true.
+
 ### Example usage
 
 ```vue
