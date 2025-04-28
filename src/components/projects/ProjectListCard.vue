@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Project } from "../../data/projects";
+import type { Project } from "../../api/data/projects";
 import StatusChip from "../global/StatusChip.vue";
 import ProjectActionsMenu from "./ProjectActionsMenu.vue";
 import Chip from "../ui/Chip.vue";
