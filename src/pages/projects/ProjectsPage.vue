@@ -47,7 +47,7 @@
         v-if="showAddProjectModal || showEditModal"
         :model-value="showAddProjectModal || showEditModal"
         @update:model-value="
-          (val) => {
+          () => {
             showAddProjectModal = false;
             showEditModal = false;
           }
