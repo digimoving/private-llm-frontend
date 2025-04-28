@@ -2,11 +2,13 @@
   <button
     :type="type"
     :class="[
-      'inline-flex items-center justify-center font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200 cursor-pointer',
+      'inline-flex items-center justify-center font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200',
       sizeClasses,
       variantClasses,
       block ? 'w-full' : 'w-auto',
-      disabled || loading ? 'opacity-50 cursor-not-allowed' : '',
+      disabled || loading
+        ? 'opacity-50 hover:cursor-not-allowed'
+        : 'cursor-pointer',
     ]"
     :disabled="disabled || loading"
     :aria-busy="loading"
@@ -79,11 +81,11 @@ const sizeClasses = {
 
 const variantClasses = {
   primary:
-    "bg-primary-600 text-white hover:bg-primary-500 focus-visible:outline-primary-600 active:bg-primary-700",
+    "bg-primary-600 text-white [&:not(:disabled)]:hover:bg-primary-500 focus-visible:outline-primary-600 [&:not(:disabled)]:active:bg-primary-700",
   secondary:
-    "bg-white text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 active:bg-gray-100",
+    "bg-white text-gray-900 ring-1 ring-gray-300 ring-inset [&:not(:disabled)]:hover:bg-gray-50 [&:not(:disabled)]:active:bg-gray-100",
   danger:
-    "bg-error-600 text-white hover:bg-error-500 focus-visible:outline-error-600 active:bg-error-700",
-  flat: "bg-transparent text-primary-600 hover:text-primary-700 hover:bg-primary-50 focus-visible:outline-primary-600 shadow-none",
+    "bg-error-600 text-white [&:not(:disabled)]:hover:bg-error-500 focus-visible:outline-error-600 [&:not(:disabled)]:active:bg-error-700",
+  flat: "bg-transparent text-primary-600 [&:not(:disabled)]:hover:text-primary-700 [&:not(:disabled)]:hover:bg-primary-50 focus-visible:outline-primary-600 shadow-none",
 }[props.variant];
 </script>
