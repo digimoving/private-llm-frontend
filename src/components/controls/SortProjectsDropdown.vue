@@ -34,10 +34,18 @@
             @click="option.onClick"
             :class="[
               active ? 'bg-gray-100' : '',
-              'w-full flex items-center px-4 py-2 text-sm text-gray-700 cursor-pointer transition-colors duration-200',
+              'w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 cursor-pointer transition-colors duration-200',
+              option.label === buttonText.split(': ')[1]
+                ? 'font-bold'
+                : 'font-normal',
             ]"
           >
             {{ option.label }}
+            <CheckIcon
+              v-if="option.label === buttonText.split(': ')[1]"
+              class="h-4 w-4 text-gray-600"
+              aria-hidden="true"
+            />
           </button>
         </MenuItem>
       </MenuItems>
@@ -50,6 +58,7 @@ import { computed } from "vue";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { ArrowsUpDownIcon } from "@heroicons/vue/24/outline";
 import Button from "../../components/ui/Button.vue";
+import { CheckIcon } from "@heroicons/vue/24/outline";
 
 type SortOption =
   | "newest"

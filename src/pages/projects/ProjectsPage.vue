@@ -38,6 +38,7 @@
           :show-as-list="showAsList"
           :show-archived="showArchived"
           :selected-filters="selectedFilters"
+          :sort-by="sortBy"
           @add-project="handleAddProject"
           @menu-click="handleMenuClick"
         />

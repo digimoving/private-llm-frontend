@@ -21,7 +21,7 @@
         <div class="rounded-full bg-primary-50 p-4 mb-4">
           <PlusIcon class="w-6 h-6 text-primary-600" />
         </div>
-        <div class="text-gray-900">Add Project</div>
+        <div class="text-gray-900 font-medium">Add Project</div>
         <div class="mt-1 text-sm text-gray-500">
           Create a new AI model project
         </div>

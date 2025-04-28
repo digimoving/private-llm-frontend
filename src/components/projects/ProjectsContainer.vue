@@ -41,12 +41,49 @@ const props = defineProps<{
     status: string[];
     tags: string[];
   };
+  sortBy:
+    | "newest"
+    | "oldest"
+    | "recently-updated"
+    | "least-recently-updated"
+    | "name-asc"
+    | "name-desc";
 }>();
 
 const projectsStore = useProjectsStore();
-const projects = computed(() =>
-  projectsStore.filteredProjects(props.showArchived, props.selectedFilters.tags)
-);
+const projects = computed(() => {
+  const filteredProjects = projectsStore.filteredProjects(
+    props.showArchived,
+    props.selectedFilters.tags
+  );
+
+  return [...filteredProjects].sort((a, b) => {
+    switch (props.sortBy) {
+      case "newest":
+        return (
+          new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+        );
+      case "oldest":
+        return (
+          new Date(a.dateCreated).getTime() - new Date(b.dateCreated).getTime()
+        );
+      case "recently-updated":
+        return (
+          new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
+        );
+      case "least-recently-updated":
+        return (
+          new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime()
+        );
+      case "name-asc":
+        return a.name.localeCompare(b.name);
+      case "name-desc":
+        return b.name.localeCompare(a.name);
+      default:
+        return 0;
+    }
+  });
+});
 
 defineEmits<{
   (e: "add-project"): void;

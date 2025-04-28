@@ -17,7 +17,7 @@
       {{ project.description }}
     </p>
 
-    <div class="flex flex-wrap gap-1 my-3">
+    <div class="flex flex-wrap gap-2 my-3">
       <Chip
         v-for="tag in project.tags"
         :key="tag"
