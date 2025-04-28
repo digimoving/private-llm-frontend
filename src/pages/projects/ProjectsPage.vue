@@ -43,6 +43,30 @@
         />
       </div>
 
+      <ProjectDetailsModal
+        v-if="showAddProjectModal || showEditModal"
+        :model-value="showAddProjectModal || showEditModal"
+        @update:model-value="
+          (val) => {
+            showAddProjectModal = false;
+            showEditModal = false;
+          }
+        "
+        :project-id="
+          showEditModal && selectedProjectId ? selectedProjectId : undefined
+        "
+      />
+      <ArchiveProjectModal
+        v-if="showArchiveModal && selectedProjectId"
+        v-model="showArchiveModal"
+        :project-id="selectedProjectId"
+      />
+      <DeleteProjectModal
+        v-if="showDeleteModal && selectedProjectId"
+        v-model="showDeleteModal"
+        :project-id="selectedProjectId"
+      />
+
       <!-- Mobile Filters Dialog -->
       <MobileFiltersDialog
         v-model:viewMode="showAsList"
@@ -65,6 +89,9 @@ import ProjectsListToggle from "../../components/controls/ProjectsListToggle.vue
 import ProjectsContainer from "../../components/projects/ProjectsContainer.vue";
 import MobileFiltersDialog from "../../components/controls/MobileFiltersDialog.vue";
 import ProjectsSkeletonLoader from "../../components/projects/ProjectsSkeletonLoader.vue";
+import ProjectDetailsModal from "../../components/modals/ProjectDetailsModal.vue";
+import ArchiveProjectModal from "../../components/modals/ArchiveProjectModal.vue";
+import DeleteProjectModal from "../../components/modals/DeleteProjectModal.vue";
 import { useProjectsStore } from "../../stores/projects";
 import type { Project } from "../../api/data/projects";
 
@@ -97,21 +124,32 @@ const selectedFilters = ref<Filters>({
   tags: ["all_tags"],
 });
 
+const showAddProjectModal = ref(false);
+const showEditModal = ref(false);
+const showArchiveModal = ref(false);
+const showDeleteModal = ref(false);
+const selectedProjectId = ref<string | null>(null);
+
 const handleFiltersUpdate = (filters: Filters) => {
   selectedFilters.value = filters;
 };
 
 const handleAddProject = () => {
-  // TODO: Implement project creation
-  console.log("Add new project clicked");
+  showAddProjectModal.value = true;
 };
 
 const handleMenuClick = (data: {
   action: "edit" | "archive" | "delete";
   project: Project;
 }) => {
-  console.log("Menu action:", data.action, "for project:", data.project.name);
-  // TODO: Implement menu actions
+  selectedProjectId.value = data.project.id;
+  if (data.action === "edit") {
+    showEditModal.value = true;
+  } else if (data.action === "archive") {
+    showArchiveModal.value = true;
+  } else if (data.action === "delete") {
+    showDeleteModal.value = true;
+  }
 };
 </script>
 

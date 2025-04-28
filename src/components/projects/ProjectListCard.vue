@@ -12,7 +12,7 @@
             :key="tag"
             size="xs"
             :text="tag"
-            class="bg-blue-100 text-blue-700"
+            class="bg-secondary-100 text-secondary-700 font-normal"
           />
         </div>
       </div>
