@@ -6,6 +6,7 @@
           variant="secondary"
           :icon="ArrowsUpDownIcon"
           class="whitespace-nowrap"
+          :disabled="disabled"
         >
           {{ buttonText }}
         </Button>
@@ -60,6 +61,7 @@ type SortOption =
 
 const props = defineProps<{
   modelValue: SortOption;
+  disabled?: boolean;
 }>();
 
 const emit = defineEmits<{

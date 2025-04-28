@@ -2,7 +2,7 @@
   <Listbox as="div" v-model="modelValue" multiple>
     <div class="relative">
       <ListboxButton as="div">
-        <Button variant="secondary" class="w-full">
+        <Button variant="secondary" class="w-full" :disabled="disabled">
           <div class="flex items-center gap-1.5">
             <FunnelIcon class="size-4 text-gray-500" aria-hidden="true" />
             <span class="truncate">{{
@@ -30,7 +30,12 @@
             class="px-3 py-2 border-b border-gray-100 flex justify-between items-center"
           >
             <h3 class="text-sm font-semibold text-gray-900">Filters</h3>
-            <Button variant="flat" size="xs" @click="clearAllFilters">
+            <Button
+              variant="flat"
+              size="xs"
+              @click="clearAllFilters"
+              :disabled="disabled"
+            >
               Clear all
             </Button>
           </div>
@@ -48,6 +53,7 @@
                   :class="[
                     active ? 'bg-primary-50 text-primary-900' : 'text-gray-900',
                     'relative cursor-default select-none py-2 pl-8 pr-4',
+                    disabled && 'opacity-50 cursor-not-allowed',
                   ]"
                 >
                   <span
@@ -77,6 +83,7 @@
                   :class="[
                     active ? 'bg-primary-50 text-primary-900' : 'text-gray-900',
                     'relative cursor-default select-none py-2 pl-8 pr-4',
+                    disabled && 'opacity-50 cursor-not-allowed',
                   ]"
                 >
                   <span
@@ -111,6 +118,7 @@
                   :class="[
                     active ? 'bg-primary-50 text-primary-900' : 'text-gray-900',
                     'relative cursor-default select-none py-2 pl-8 pr-4',
+                    disabled && 'opacity-50 cursor-not-allowed',
                   ]"
                 >
                   <span
@@ -140,6 +148,7 @@
                   :class="[
                     active ? 'bg-primary-50 text-primary-900' : 'text-gray-900',
                     'relative cursor-default select-none py-2 pl-8 pr-4',
+                    disabled && 'opacity-50 cursor-not-allowed',
                   ]"
                 >
                   <span
@@ -177,25 +186,30 @@ import {
 import { FunnelIcon } from "@heroicons/vue/24/outline";
 import { CheckIcon } from "@heroicons/vue/20/solid";
 import Button from "../../components/ui/Button.vue";
+import { useProjectsStore } from "../../stores/projects";
 
-const tags = ["Tag 1", "Tag 2", "Tag 3", "Tag 4"] as const;
-type Tag = (typeof tags)[number];
+defineProps<{
+  disabled?: boolean;
+}>();
 
 const statusOptions = ["active", "archived"] as const;
 type Status = (typeof statusOptions)[number];
+
+const projectsStore = useProjectsStore();
+const tags = computed(() => projectsStore.allTags());
 
 const selectedFilters = ref<string[]>([]);
 
 // Helper functions to manage selections
 const getAllStatusFilters = () => [...statusOptions];
-const getAllTagFilters = () => [...tags];
+const getAllTagFilters = () => [...tags.value];
 
 const updateFilters = (newValue: string[]) => {
   const statusFilters = newValue.filter((f) =>
     ["all", ...statusOptions].includes(f)
   );
   const tagFilters = newValue.filter((f) =>
-    ["all_tags", ...tags].includes(f as Tag)
+    ["all_tags", ...tags.value].includes(f)
   );
 
   let newFilters = [...newValue];
@@ -221,7 +235,7 @@ const updateFilters = (newValue: string[]) => {
     status: statusFilters.includes("all") ? ["all"] : statusFilters,
     tags: tagFilters.includes("all_tags")
       ? ["all_tags"]
-      : tagFilters.filter((t) => tags.includes(t as Tag)),
+      : tagFilters.filter((t) => tags.value.includes(t)),
   });
 };
 
@@ -230,7 +244,7 @@ const selectedCount = computed(() => {
     statusOptions.includes(f as Status)
   ).length;
   const tagCount = selectedFilters.value.filter((f) =>
-    tags.includes(f as Tag)
+    tags.value.includes(f)
   ).length;
   return statusCount + tagCount;
 });

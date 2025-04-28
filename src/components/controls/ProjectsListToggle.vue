@@ -8,7 +8,9 @@
       :class="[
         !enabled ? 'bg-white shadow-sm' : 'hover:bg-gray-200',
         'flex h-full items-center justify-center rounded-l-lg px-2.5 transition-colors duration-200',
+        disabled && 'opacity-50 cursor-not-allowed hover:bg-transparent',
       ]"
+      :disabled="disabled"
     >
       <Squares2X2Icon class="size-5 text-gray-700" />
       <span class="sr-only">Grid view</span>
@@ -19,7 +21,9 @@
       :class="[
         enabled ? 'bg-white shadow-sm' : 'hover:bg-gray-200',
         'flex h-full items-center justify-center rounded-r-lg px-2.5 transition-colors duration-200',
+        disabled && 'opacity-50 cursor-not-allowed hover:bg-transparent',
       ]"
+      :disabled="disabled"
     >
       <ListBulletIcon class="size-5 text-gray-700" />
       <span class="sr-only">List view</span>
@@ -33,6 +37,7 @@ import { Squares2X2Icon, ListBulletIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps<{
   modelValue: boolean;
+  disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
