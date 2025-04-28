@@ -63,6 +63,7 @@
                   v-if="primaryButton"
                   :variant="primaryButton.variant || 'primary'"
                   :disabled="primaryButton.disabled"
+                  :loading="primaryButton.loading"
                   @click="$emit('primary-click')"
                 >
                   {{ primaryButton.text }}
@@ -101,6 +102,7 @@ interface Props {
     text: string;
     variant?: "primary" | "danger";
     disabled?: boolean;
+    loading?: boolean;
   };
   secondaryButton?: {
     text?: string;

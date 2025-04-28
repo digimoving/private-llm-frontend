@@ -5,6 +5,7 @@
     :primary-button="{
       text: project ? 'Update Project' : 'Create Project',
       disabled: !isValid,
+      loading: loading,
     }"
     @primary-click="handleSubmit"
     @secondary-click="handleCancel"
@@ -98,6 +99,10 @@ watch(
 const isValid = computed(() => {
   return formValues.value.name.trim() !== "";
 });
+
+const loading = computed(() =>
+  project.value ? projectsStore.loading.update : projectsStore.loading.create
+);
 
 const handleFormUpdate = (values: Record<string, string>) => {
   formValues.value = {
