@@ -9,8 +9,8 @@ import {
 } from "@heroicons/vue/24/outline";
 import type { Project } from "../../data/projects";
 import { computed, ref } from "vue";
-import ArchiveProjectModal from "./ArchiveProjectModal.vue";
-import DeleteProjectModal from "./DeleteProjectModal.vue";
+import ArchiveProjectModal from "../modals/ArchiveProjectModal.vue";
+import DeleteProjectModal from "../modals/DeleteProjectModal.vue";
 
 interface Props {
   project: Project;

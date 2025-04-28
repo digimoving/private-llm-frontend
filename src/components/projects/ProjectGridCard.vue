@@ -9,25 +9,24 @@
         @menu-click="$emit('menuClick', $event)"
       />
     </div>
-    <div class="mt-2 flex flex-wrap items-center gap-2">
-      <h3 class="font-semibold text-gray-900 text-lg">
-        {{ project.name }}
-      </h3>
-      <p class="text-sm text-gray-600 mt-2 line-clamp-2">
-        {{ project.description }}
-      </p>
 
-      <div class="flex flex-wrap gap-1 my-2">
-        <Chip
-          v-for="tag in project.tags"
-          :key="tag"
-          size="xs"
-          :text="tag"
-          class="bg-secondary-100 text-secondary-700 font-normal"
-        />
-      </div>
-      <div class="text-xs text-gray-500">Last updated: {{ timeAgo }}</div>
+    <h3 class="font-semibold text-gray-900 text-lg">
+      {{ project.name }}
+    </h3>
+    <p class="text-sm text-gray-600 mt-2 line-clamp-2">
+      {{ project.description }}
+    </p>
+
+    <div class="flex flex-wrap gap-1 my-3">
+      <Chip
+        v-for="tag in project.tags"
+        :key="tag"
+        size="xs"
+        :text="tag"
+        class="bg-secondary-100 text-secondary-700 font-normal"
+      />
     </div>
+    <div class="text-xs text-gray-500">Last updated: {{ timeAgo }}</div>
   </div>
 </template>
 

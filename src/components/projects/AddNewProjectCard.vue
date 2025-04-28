@@ -1,6 +1,6 @@
 <template>
   <Card
-    class="group w-full h-full transition-all duration-200 bg-white border border-dashed border-gray-400 hover:border-gray-500"
+    class="group w-full h-full transition-all duration-200 bg-white border border-dashed border-gray-400 hover:border-gray-500 hover:shadow-md cursor-pointer"
     :class="{
       'p-8': !showAsList,
       'p-4': showAsList,
