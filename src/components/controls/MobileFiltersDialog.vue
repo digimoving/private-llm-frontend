@@ -148,7 +148,9 @@ const emit = defineEmits<{
 const projectsStore = useProjectsStore();
 const open = ref(false);
 
-const isDisabled = computed(() => props.disabled || projectsStore.isLoading);
+const isDisabled = computed(
+  () => props.disabled || projectsStore.loading.projects
+);
 
 const viewMode = ref(props.viewMode);
 const sortBy = ref(props.sortBy);

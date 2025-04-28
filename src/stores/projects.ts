@@ -130,7 +130,7 @@ export const useProjectsStore = defineStore("projects", {
         this.loading.create = true;
         this.error = null;
         const response = await projectsApi.create(projectData);
-        this.projects.push(response.data);
+        this.projects.unshift(response.data);
         return response.data;
       } catch (error) {
         this.error =

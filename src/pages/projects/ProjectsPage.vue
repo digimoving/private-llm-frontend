@@ -9,27 +9,27 @@
         <div class="flex items-center gap-2">
           <ToggleArchivedCheckbox
             v-model="showArchived"
-            :disabled="projectsStore.isLoading"
+            :disabled="projectsStore.loading.projects"
           />
           <FilterProjectsDropdown
             :show-archived="showArchived"
-            :disabled="projectsStore.isLoading"
+            :disabled="projectsStore.loading.projects"
             @update:filters="handleFiltersUpdate"
           />
           <SortProjectsDropdown
             v-model="sortBy"
-            :disabled="projectsStore.isLoading"
+            :disabled="projectsStore.loading.projects"
           />
           <ProjectsListToggle
             v-model="showAsList"
-            :disabled="projectsStore.isLoading"
+            :disabled="projectsStore.loading.projects"
           />
         </div>
       </div>
 
       <div class="relative min-h-[600px]">
         <ProjectsSkeletonLoader
-          v-if="projectsStore.isLoading"
+          v-if="projectsStore.loading.projects"
           :show-as-list="showAsList"
           @add-project="handleAddProject"
         />

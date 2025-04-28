@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import Modal from "../ui/Modal.vue";
 import Form from "../ui/Form.vue";
 import type { FormField } from "../ui/Form.vue";
@@ -79,6 +79,21 @@ const formValues = ref({
   description: project.value?.description || "",
   tags: project.value?.tags.join(", ") || "",
 });
+
+// Watch for changes to project or modal open/close
+watch(
+  [project, () => props.modelValue],
+  ([newProject, newModelValue]) => {
+    if (newModelValue) {
+      formValues.value = {
+        name: newProject?.name || "",
+        description: newProject?.description || "",
+        tags: newProject?.tags.join(", ") || "",
+      };
+    }
+  },
+  { immediate: true }
+);
 
 const isValid = computed(() => {
   return formValues.value.name.trim() !== "";
