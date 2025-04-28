@@ -2,12 +2,12 @@
   <ConfirmationModal
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
-    :project="project"
+    :project-name="project?.name ?? ''"
     title="Archive Project"
     description="Archived projects will be uneditable and hidden from the dashboard by default. All LLM resources associated with the project will be paused, meaning:"
     primary-button-text="Archive Project"
     confirmation-prompt="To confirm you're happy to archive this project, type"
-    @confirm="$emit('confirm')"
+    @confirm="handleConfirm"
   >
     <template #details>
       <ul class="mt-4 ml-5 list-disc space-y-2">
@@ -20,16 +20,28 @@
 </template>
 
 <script setup lang="ts">
-import ConfirmationModal from "../ui/ConfirmationModal.vue";
-import type { Project } from "../../data/projects";
+import { computed } from "vue";
+import ConfirmationModal from "../modals/ConfirmationModal.vue";
+import { useProjectsStore } from "../../stores/projects";
 
-defineProps<{
+const props = defineProps<{
   modelValue: boolean;
-  project: Project;
+  projectId: string;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   "update:modelValue": [value: boolean];
-  confirm: [];
 }>();
+
+const projectsStore = useProjectsStore();
+const project = computed(() => projectsStore.getProjectById(props.projectId));
+
+const handleConfirm = async () => {
+  if (project.value) {
+    await projectsStore.updateProject(project.value.id, {
+      archived: !project.value.archived,
+    });
+  }
+  emit("update:modelValue", false);
+};
 </script>

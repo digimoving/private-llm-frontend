@@ -2,25 +2,35 @@
   <ConfirmationModal
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
-    :project="project"
+    :project-name="project?.name ?? ''"
     title="Delete Project"
     description="This action cannot be undone. This will permanently delete the project and remove all associated data and LLM resources."
     primary-button-text="Delete Project"
-    @confirm="$emit('confirm')"
+    @confirm="handleConfirm"
   />
 </template>
 
 <script setup lang="ts">
-import ConfirmationModal from "../ui/ConfirmationModal.vue";
-import type { Project } from "../../data/projects";
+import { computed } from "vue";
+import ConfirmationModal from "../modals/ConfirmationModal.vue";
+import { useProjectsStore } from "../../stores/projects";
 
-defineProps<{
+const props = defineProps<{
   modelValue: boolean;
-  project: Project;
+  projectId: string;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   "update:modelValue": [value: boolean];
-  confirm: [];
 }>();
+
+const projectsStore = useProjectsStore();
+const project = computed(() => projectsStore.getProjectById(props.projectId));
+
+const handleConfirm = async () => {
+  if (project.value) {
+    await projectsStore.deleteProject(project.value.id);
+  }
+  emit("update:modelValue", false);
+};
 </script>

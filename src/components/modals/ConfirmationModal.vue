@@ -39,13 +39,12 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import Modal from "./Modal.vue";
-import FormInput from "./FormInput.vue";
-import type { Project } from "../../data/projects";
+import Modal from "../ui/Modal.vue";
+import FormInput from "../ui/FormInput.vue";
 
 interface Props {
   modelValue: boolean;
-  project: Project;
+  projectName: string;
   title: string;
   description: string;
   primaryButtonText: string;
@@ -68,7 +67,7 @@ const inputText = ref("");
 const showError = ref(false);
 
 const confirmationText = computed(() => {
-  return props.project.name.toLowerCase().replace(/\s+/g, "-");
+  return props.projectName.toLowerCase().replace(/\s+/g, "-");
 });
 
 const handleConfirm = () => {

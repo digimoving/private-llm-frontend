@@ -36,18 +36,22 @@ import { ref, computed } from "vue";
 import Modal from "../ui/Modal.vue";
 import Form from "../ui/Form.vue";
 import type { FormField } from "../ui/Form.vue";
-import type { Project } from "../../data/projects";
+import { useProjectsStore } from "../../stores/projects";
 
 interface Props {
   modelValue: boolean;
-  project?: Project;
+  projectId?: string;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
   "update:modelValue": [value: boolean];
-  submit: [values: { name: string; description: string; tags: string }];
 }>();
+
+const projectsStore = useProjectsStore();
+const project = computed(() =>
+  props.projectId ? projectsStore.getProjectById(props.projectId) : null
+);
 
 const formFields: FormField[] = [
   {
@@ -71,9 +75,9 @@ const formFields: FormField[] = [
 ];
 
 const formValues = ref({
-  name: props.project?.name || "",
-  description: props.project?.description || "",
-  tags: props.project?.tags.join(", ") || "",
+  name: project.value?.name || "",
+  description: project.value?.description || "",
+  tags: project.value?.tags.join(", ") || "",
 });
 
 const isValid = computed(() => {
@@ -88,12 +92,27 @@ const handleFormUpdate = (values: Record<string, string>) => {
   };
 };
 
-const handleSubmit = () => {
-  emit("submit", formValues.value);
+const handleSubmit = async () => {
+  const projectData = {
+    name: formValues.value.name.trim(),
+    description: formValues.value.description.trim(),
+    tags: formValues.value.tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean),
+    archived: false,
+  };
+
+  if (project.value) {
+    await projectsStore.updateProject(project.value.id, projectData);
+  } else {
+    await projectsStore.createProject(projectData);
+  }
+
   emit("update:modelValue", false);
 
   // Only reset form if it's create mode
-  if (!props.project) {
+  if (!project.value) {
     formValues.value = { name: "", description: "", tags: "" };
   }
 };
@@ -102,11 +121,11 @@ const handleCancel = () => {
   emit("update:modelValue", false);
 
   // Reset to original values if in edit mode
-  if (props.project) {
+  if (project.value) {
     formValues.value = {
-      name: props.project.name,
-      description: props.project.description,
-      tags: props.project.tags.join(", "),
+      name: project.value.name,
+      description: project.value.description,
+      tags: project.value.tags.join(", "),
     };
   } else {
     formValues.value = { name: "", description: "", tags: "" };

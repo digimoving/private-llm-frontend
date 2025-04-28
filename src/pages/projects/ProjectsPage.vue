@@ -7,25 +7,48 @@
       <!-- Desktop Controls -->
       <div class="hidden lg:flex items-center justify-end gap-4 mb-4">
         <div class="flex items-center gap-2">
-          <FilterProjectsDropdown @update:filters="handleFiltersUpdate" />
-          <SortProjectsDropdown v-model="sortBy" />
-          <ToggleArchivedCheckbox v-model="showArchived" />
-          <ProjectsListToggle v-model="showAsList" />
+          <ToggleArchivedCheckbox
+            v-model="showArchived"
+            :disabled="projectsStore.isLoading"
+          />
+          <FilterProjectsDropdown
+            :show-archived="showArchived"
+            :disabled="projectsStore.isLoading"
+            @update:filters="handleFiltersUpdate"
+          />
+          <SortProjectsDropdown
+            v-model="sortBy"
+            :disabled="projectsStore.isLoading"
+          />
+          <ProjectsListToggle
+            v-model="showAsList"
+            :disabled="projectsStore.isLoading"
+          />
         </div>
       </div>
 
-      <ProjectsContainer
-        :projects="filteredProjects"
-        :show-as-list="showAsList"
-        @add-project="handleAddProject"
-        @menu-click="handleMenuClick"
-      />
+      <div class="relative min-h-[600px]">
+        <ProjectsSkeletonLoader
+          v-if="projectsStore.isLoading"
+          :show-as-list="showAsList"
+          @add-project="handleAddProject"
+        />
+        <ProjectsContainer
+          v-else
+          :show-as-list="showAsList"
+          :show-archived="showArchived"
+          :selected-filters="selectedFilters"
+          @add-project="handleAddProject"
+          @menu-click="handleMenuClick"
+        />
+      </div>
 
       <!-- Mobile Filters Dialog -->
       <MobileFiltersDialog
         v-model:viewMode="showAsList"
         v-model:sortBy="sortBy"
         v-model:showArchived="showArchived"
+        :disabled="projectsStore.loading.projects"
         @update:filters="handleFiltersUpdate"
       />
     </div>
@@ -33,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, onMounted } from "vue";
 import DefaultLayout from "../../layouts/DefaultLayout.vue";
 import FilterProjectsDropdown from "../../components/controls/FilterProjectsDropdown.vue";
 import SortProjectsDropdown from "../../components/controls/SortProjectsDropdown.vue";
@@ -41,8 +64,16 @@ import ToggleArchivedCheckbox from "../../components/controls/ToggleArchivedChec
 import ProjectsListToggle from "../../components/controls/ProjectsListToggle.vue";
 import ProjectsContainer from "../../components/projects/ProjectsContainer.vue";
 import MobileFiltersDialog from "../../components/controls/MobileFiltersDialog.vue";
-import { projects } from "../../data/projects";
-import type { Project } from "../../data/projects";
+import ProjectsSkeletonLoader from "../../components/projects/ProjectsSkeletonLoader.vue";
+import { useProjectsStore } from "../../stores/projects";
+import type { Project } from "../../api/data/projects";
+
+const projectsStore = useProjectsStore();
+
+// Load projects when component mounts
+onMounted(async () => {
+  await projectsStore.fetchProjects();
+});
 
 const sortBy = ref<
   | "newest"
@@ -61,9 +92,13 @@ interface Filters {
   tags: string[];
 }
 
+const selectedFilters = ref<Filters>({
+  status: ["all"],
+  tags: ["all_tags"],
+});
+
 const handleFiltersUpdate = (filters: Filters) => {
-  console.log("Filters updated:", filters);
-  // TODO: Apply filters to projects list
+  selectedFilters.value = filters;
 };
 
 const handleAddProject = () => {
@@ -78,16 +113,6 @@ const handleMenuClick = (data: {
   console.log("Menu action:", data.action, "for project:", data.project.name);
   // TODO: Implement menu actions
 };
-
-const filteredProjects = computed(() => {
-  return projects.filter((project) => {
-    // Show archived projects only if toggled
-    if (!showArchived.value && project.archived) {
-      return false;
-    }
-    return true;
-  });
-});
 </script>
 
 <style scoped></style>

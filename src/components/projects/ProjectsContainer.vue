@@ -27,15 +27,26 @@
 </template>
 
 <script setup lang="ts">
-import type { Project } from "../../data/projects";
+import { computed } from "vue";
+import { useProjectsStore } from "../../stores/projects";
+import type { Project } from "../../api/data/projects";
 import ProjectListCard from "./ProjectListCard.vue";
 import ProjectGridCard from "./ProjectGridCard.vue";
 import AddNewProjectCard from "./AddNewProjectCard.vue";
 
-defineProps<{
-  projects: Project[];
+const props = defineProps<{
   showAsList: boolean;
+  showArchived: boolean;
+  selectedFilters: {
+    status: string[];
+    tags: string[];
+  };
 }>();
+
+const projectsStore = useProjectsStore();
+const projects = computed(() =>
+  projectsStore.filteredProjects(props.showArchived, props.selectedFilters.tags)
+);
 
 defineEmits<{
   (e: "add-project"): void;

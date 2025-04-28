@@ -7,7 +7,7 @@ import {
   ArchiveBoxArrowDownIcon,
   TrashIcon,
 } from "@heroicons/vue/24/outline";
-import type { Project } from "../../data/projects";
+import type { Project } from "../../api/data/projects";
 import { computed, ref } from "vue";
 import ArchiveProjectModal from "../modals/ArchiveProjectModal.vue";
 import DeleteProjectModal from "../modals/DeleteProjectModal.vue";
@@ -95,15 +95,7 @@ const handleMenuClick = (data: { action: MenuAction; project: Project }) => {
     </MenuItems>
   </Menu>
 
-  <ArchiveProjectModal
-    v-model="showArchiveModal"
-    :project="project"
-    @confirm="$emit('menuClick', { action: 'archive', project })"
-  />
+  <ArchiveProjectModal v-model="showArchiveModal" :project-id="project.id" />
 
-  <DeleteProjectModal
-    v-model="showDeleteModal"
-    :project="project"
-    @confirm="$emit('menuClick', { action: 'delete', project })"
-  />
+  <DeleteProjectModal v-model="showDeleteModal" :project-id="project.id" />
 </template>

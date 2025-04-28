@@ -26,12 +26,12 @@
         class="bg-secondary-100 text-secondary-700 font-normal"
       />
     </div>
-    <div class="text-xs text-gray-500">Last updated: {{ timeAgo }}</div>
+    <div class="text-xs text-gray-500 mt-auto">Last updated: {{ timeAgo }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Project } from "../../data/projects";
+import type { Project } from "../../api/data/projects";
 import Chip from "../ui/Chip.vue";
 import StatusChip from "../global/StatusChip.vue";
 import ProjectActionsMenu from "./ProjectActionsMenu.vue";
