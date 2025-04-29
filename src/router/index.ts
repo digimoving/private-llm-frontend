@@ -9,6 +9,10 @@ const routes = [
     component: () => import("../pages/projects/ProjectsPage.vue"),
   },
   {
+    path: "/notifications",
+    component: () => import("../pages/notifications/NotificationsPage.vue"),
+  },
+  {
     path: "/style-guide",
     component: () => import("../pages/misc/StyleGuide.vue"),
   },

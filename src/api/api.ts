@@ -1,5 +1,7 @@
 import type { Project } from "./data/projects";
+import type { Notification } from "../stores/notifications";
 import { projects } from "./data/projects";
+import { notifications } from "./data/notifications";
 
 // Simulated delay to mimic API calls
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -64,5 +66,41 @@ export const projectsApi = {
     if (index === -1) throw new Error("Project not found");
     projects.splice(index, 1);
     return { data: null };
+  },
+};
+
+export const notificationsApi = {
+  // Get all notifications
+  async getNotifications(): Promise<Notification[]> {
+    await delay(500); // Simulate network delay
+    return [...notifications];
+  },
+
+  // Mark a notification as read/unread
+  async toggleNotificationRead(id: string): Promise<Notification> {
+    const notification = notifications.find((n) => n.id === id);
+    if (!notification) {
+      throw new Error("Notification not found");
+    }
+    notification.read = !notification.read;
+    return notification;
+  },
+
+  // Delete a notification
+  async deleteNotification(id: string): Promise<void> {
+    await delay(300);
+    // In a real API, this would make a DELETE request
+    const index = notifications.findIndex((n) => n.id === id);
+    if (index !== -1) {
+      notifications.splice(index, 1);
+    }
+  },
+
+  // Mark all notifications as read
+  async markAllAsRead(): Promise<Notification[]> {
+    notifications.forEach((notification) => {
+      notification.read = true;
+    });
+    return [...notifications];
   },
 };

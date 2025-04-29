@@ -6,7 +6,12 @@
       <StatusChip :is-archived="project.archived" />
       <ProjectActionsMenu
         :project="project"
-        @menu-click="$emit('menuClick', $event)"
+        @menu-click="
+          $emit('menuClick', {
+            action: $event.action as 'edit' | 'archive' | 'delete',
+            project,
+          })
+        "
       />
     </div>
 
