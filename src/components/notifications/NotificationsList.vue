@@ -15,6 +15,7 @@
       >
         <div
           class="flex items-start justify-between p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
+          :class="{ 'bg-gray-50': notification.read }"
         >
           <div class="flex items-start space-x-4">
             <!-- Notification Icon based on type -->
@@ -73,7 +74,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Notification } from "../../stores/notifications";
+import { computed } from "vue";
+import type { Notification } from "../../types/types";
 import { useDateFormat } from "@vueuse/core";
 import ActionMenu from "../ui/ActionMenu.vue";
 import {
