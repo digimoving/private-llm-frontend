@@ -34,9 +34,8 @@
     <div class="text-xs text-gray-500 mt-auto">Last updated: {{ timeAgo }}</div>
   </div>
 </template>
-
 <script setup lang="ts">
-import type { Project } from "../../api/data/projects";
+import type { Project } from "../../types/types";
 import Chip from "../ui/Chip.vue";
 import StatusChip from "../global/StatusChip.vue";
 import ProjectActionsMenu from "./ProjectActionsMenu.vue";

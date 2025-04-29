@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { projectsApi } from "../api";
-import type { Project } from "../api/data/projects";
+import { projectsApi } from "../api/api";
+import type { Project } from "../types/types";
 
 interface LoadingState {
   projects: boolean;
@@ -47,7 +47,7 @@ export const useProjectsStore = defineStore("projects", {
         state.projects.forEach((project) => {
           // Only include tags from active projects unless showArchived is true
           if (showArchived || !project.archived) {
-            project.tags.forEach((tag) => tagSet.add(tag));
+            project.tags?.forEach((tag) => tagSet.add(tag));
           }
         });
         return Array.from(tagSet).sort();
@@ -68,7 +68,7 @@ export const useProjectsStore = defineStore("projects", {
           if (!selectedTags.includes("all_tags")) {
             // Check if project has any of the selected tags
             const hasSelectedTag = selectedTags.some((tag) =>
-              project.tags.includes(tag)
+              project.tags?.includes(tag)
             );
             if (!hasSelectedTag) {
               return false;
@@ -93,7 +93,7 @@ export const useProjectsStore = defineStore("projects", {
       try {
         this.loading.projects = true;
         this.error = null;
-        const response = await projectsApi.getAll(params);
+        const response = await projectsApi.list(params);
         this.projects = response.data;
       } catch (error) {
         this.error =
@@ -110,7 +110,7 @@ export const useProjectsStore = defineStore("projects", {
       try {
         this.loading.project = true;
         this.error = null;
-        const response = await projectsApi.getById(id);
+        const response = await projectsApi.get(id);
         this.currentProject = response.data;
       } catch (error) {
         this.error =

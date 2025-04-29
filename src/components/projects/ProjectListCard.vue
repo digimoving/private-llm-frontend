@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Project } from "../../api/data/projects";
+import type { Project } from "../../types/types";
 import StatusChip from "../global/StatusChip.vue";
 import ProjectActionsMenu from "./ProjectActionsMenu.vue";
 import Chip from "../ui/Chip.vue";

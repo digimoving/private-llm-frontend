@@ -1,88 +1,82 @@
 <template>
-  <DefaultLayout
-    title="Projects"
-    subtitle="Manage your private AI models and projects."
-  >
-    <div class="space-y-8">
-      <!-- Desktop Controls -->
-      <div class="hidden lg:flex items-center justify-end gap-4 mb-4">
-        <div class="flex items-center gap-2">
-          <ToggleArchivedCheckbox
-            v-model="showArchived"
-            :disabled="projectsStore.loading.projects"
-          />
-          <FilterProjectsDropdown
-            :show-archived="showArchived"
-            :disabled="projectsStore.loading.projects"
-            @update:filters="handleFiltersUpdate"
-          />
-          <SortProjectsDropdown
-            v-model="sortBy"
-            :disabled="projectsStore.loading.projects"
-          />
-          <ProjectsListToggle
-            v-model="showAsList"
-            :disabled="projectsStore.loading.projects"
-          />
-        </div>
-      </div>
-
-      <div class="relative min-h-[600px]">
-        <ProjectsSkeletonLoader
-          v-if="projectsStore.loading.projects"
-          :show-as-list="showAsList"
-          @add-project="handleAddProject"
+  <div class="space-y-8">
+    <!-- Desktop Controls -->
+    <div class="hidden lg:flex items-center justify-end gap-4 mb-4">
+      <div class="flex items-center gap-2">
+        <ToggleArchivedCheckbox
+          v-model="showArchived"
+          :disabled="projectsStore.loading.projects"
         />
-        <ProjectsContainer
-          v-else
-          :show-as-list="showAsList"
+        <FilterProjectsDropdown
           :show-archived="showArchived"
-          :selected-filters="selectedFilters"
-          :sort-by="sortBy"
-          @add-project="handleAddProject"
-          @menu-click="handleMenuClick"
+          :disabled="projectsStore.loading.projects"
+          @update:filters="handleFiltersUpdate"
+        />
+        <SortProjectsDropdown
+          v-model="sortBy"
+          :disabled="projectsStore.loading.projects"
+        />
+        <ProjectsListToggle
+          v-model="showAsList"
+          :disabled="projectsStore.loading.projects"
         />
       </div>
+    </div>
 
-      <ProjectDetailsModal
-        v-if="showAddProjectModal || showEditModal"
-        :model-value="showAddProjectModal || showEditModal"
-        @update:model-value="
-          () => {
-            showAddProjectModal = false;
-            showEditModal = false;
-          }
-        "
-        :project-id="
-          showEditModal && selectedProjectId ? selectedProjectId : undefined
-        "
+    <div class="relative min-h-[600px]">
+      <ProjectsSkeletonLoader
+        v-if="projectsStore.loading.projects"
+        :show-as-list="showAsList"
+        @add-project="handleAddProject"
       />
-      <ArchiveProjectModal
-        v-if="showArchiveModal && selectedProjectId"
-        v-model="showArchiveModal"
-        :project-id="selectedProjectId"
-      />
-      <DeleteProjectModal
-        v-if="showDeleteModal && selectedProjectId"
-        v-model="showDeleteModal"
-        :project-id="selectedProjectId"
-      />
-
-      <!-- Mobile Filters Dialog -->
-      <MobileFiltersDialog
-        v-model:viewMode="showAsList"
-        v-model:sortBy="sortBy"
-        v-model:showArchived="showArchived"
-        :disabled="projectsStore.loading.projects"
-        @update:filters="handleFiltersUpdate"
+      <ProjectsContainer
+        v-else
+        :show-as-list="showAsList"
+        :show-archived="showArchived"
+        :selected-filters="selectedFilters"
+        :sort-by="sortBy"
+        @add-project="handleAddProject"
+        @menu-click="handleMenuClick"
       />
     </div>
-  </DefaultLayout>
+
+    <ProjectDetailsModal
+      v-if="showAddProjectModal || showEditModal"
+      :model-value="showAddProjectModal || showEditModal"
+      @update:model-value="
+        () => {
+          showAddProjectModal = false;
+          showEditModal = false;
+        }
+      "
+      :project-id="
+        showEditModal && selectedProjectId ? selectedProjectId : undefined
+      "
+    />
+    <ArchiveProjectModal
+      v-if="showArchiveModal && selectedProjectId"
+      v-model="showArchiveModal"
+      :project-id="selectedProjectId"
+    />
+    <DeleteProjectModal
+      v-if="showDeleteModal && selectedProjectId"
+      v-model="showDeleteModal"
+      :project-id="selectedProjectId"
+    />
+
+    <!-- Mobile Filters Dialog -->
+    <MobileFiltersDialog
+      v-model:viewMode="showAsList"
+      v-model:sortBy="sortBy"
+      v-model:showArchived="showArchived"
+      :disabled="projectsStore.loading.projects"
+      @update:filters="handleFiltersUpdate"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import DefaultLayout from "../../layouts/DefaultLayout.vue";
 import FilterProjectsDropdown from "../../components/controls/FilterProjectsDropdown.vue";
 import SortProjectsDropdown from "../../components/controls/SortProjectsDropdown.vue";
 import ToggleArchivedCheckbox from "../../components/controls/ToggleArchivedCheckbox.vue";
