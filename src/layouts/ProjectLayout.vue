@@ -2,58 +2,43 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Navigation Bar -->
-    <header class="bg-white border-b border-gray-200">
+    <div class="bg-white border-b border-gray-200">
       <div
         class="container mx-auto px-4 h-16 flex items-center justify-between"
       >
         <div class="flex items-center space-x-4">
           <!-- Back Button -->
-          <RouterLink
-            to="/projects"
-            class="text-gray-600 hover:text-gray-900 flex items-center"
-          >
-            <ChevronLeftIcon class="h-5 w-5" />
+          <Button variant="icon" @click="$router.push('/projects')">
+            <ArrowLeftIcon class="h-5 w-5" />
             <span class="sr-only">Back to Projects</span>
-          </RouterLink>
+          </Button>
 
           <!-- Project Title with Edit -->
           <div class="flex items-center">
-            <h1
-              v-if="!isEditing"
-              class="text-xl font-semibold text-gray-900 flex items-center"
-            >
-              {{ projectStore.currentProject?.name }}
-              <button
-                @click="startEditing"
-                class="ml-2 text-gray-400 hover:text-gray-600"
+            <div class="flex items-center">
+              <div
+                v-if="isLoading"
+                class="h-[18px] w-48 bg-gray-200 rounded-lg animate-pulse"
+              ></div>
+              <h1
+                v-else-if="!isEditing"
+                class="text-xl font-semibold text-gray-900"
               >
-                <PencilIcon class="h-4 w-4" />
+                {{ projectStore.currentProject?.name }}
+              </h1>
+              <Button variant="icon" @click="startEditing" class="ml-2">
+                <PencilSquareIcon class="h-5 w-5" />
                 <span class="sr-only">Edit Project Name</span>
-              </button>
-            </h1>
-            <div v-else class="flex items-center space-x-2">
-              <input
+              </Button>
+            </div>
+            <div v-if="isEditing" class="flex items-center">
+              <Input
                 ref="titleInput"
                 v-model="editedTitle"
-                type="text"
-                class="text-xl font-semibold text-gray-900 border-b border-gray-300 focus:border-primary-500 focus:ring-0 bg-transparent"
-                @keyup.enter="saveTitle"
+                class="font-semibold text-gray-900"
+                @blur="saveTitle"
                 @keyup.esc="cancelEditing"
               />
-              <div class="flex items-center space-x-1">
-                <button
-                  @click="saveTitle"
-                  class="text-green-600 hover:text-green-700"
-                >
-                  <CheckIcon class="h-5 w-5" />
-                </button>
-                <button
-                  @click="cancelEditing"
-                  class="text-red-600 hover:text-red-700"
-                >
-                  <XMarkIcon class="h-5 w-5" />
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -61,10 +46,11 @@
         <!-- Archive Button -->
         <Button
           variant="secondary"
-          @click="archiveProject"
-          :loading="isArchiving"
+          @click="handleArchiveClick"
+          :loading="isUnarchiving"
         >
-          Archive Project
+          {{ projectStore.currentProject?.archived ? "Unarchive" : "Archive" }}
+          Project
         </Button>
       </div>
 
@@ -86,26 +72,29 @@
           </RouterLink>
         </nav>
       </div>
-    </header>
+    </div>
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-6">
       <slot />
     </main>
+
+    <!-- Modals -->
+    <ArchiveProjectModal
+      v-model="showArchiveModal"
+      :project-id="route.params.projectId as string"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick, computed } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { useProjectsStore } from "../stores/projects";
-import {
-  ChevronLeftIcon,
-  PencilIcon,
-  CheckIcon,
-  XMarkIcon,
-} from "@heroicons/vue/24/outline";
+import { ArrowLeftIcon, PencilSquareIcon } from "@heroicons/vue/24/outline";
 import Button from "../components/ui/Button.vue";
+import Input from "../components/ui/Input.vue";
+import ArchiveProjectModal from "../components/modals/ArchiveProjectModal.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -113,8 +102,10 @@ const projectStore = useProjectsStore();
 
 const isEditing = ref(false);
 const editedTitle = ref("");
-const titleInput = ref<HTMLInputElement | null>(null);
-const isArchiving = ref(false);
+const titleInput = ref<{ focus: () => void }>();
+const showArchiveModal = ref(false);
+const isUnarchiving = ref(false);
+const isLoading = computed(() => projectStore.loading.project);
 
 const tabs = [
   { name: "LLM Resources", to: { name: "project-llms" } },
@@ -137,29 +128,43 @@ const startEditing = () => {
 };
 
 const saveTitle = async () => {
-  if (projectStore.currentProject && editedTitle.value.trim()) {
+  if (
+    projectStore.currentProject &&
+    editedTitle.value.trim() &&
+    editedTitle.value !== projectStore.currentProject.name
+  ) {
     await projectStore.updateProject(projectStore.currentProject.id, {
       name: editedTitle.value.trim(),
     });
-    isEditing.value = false;
   }
+  isEditing.value = false;
 };
 
 const cancelEditing = () => {
   isEditing.value = false;
 };
 
-const archiveProject = async () => {
+const handleArchiveClick = async () => {
   if (!projectStore.currentProject) return;
 
-  isArchiving.value = true;
-  try {
-    await projectStore.updateProject(projectStore.currentProject.id, {
-      archived: true,
-    });
-    router.push("/projects");
-  } finally {
-    isArchiving.value = false;
+  if (projectStore.currentProject.archived) {
+    // Directly unarchive
+    isUnarchiving.value = true;
+    try {
+      await projectStore.updateProject(projectStore.currentProject.id, {
+        archived: false,
+      });
+      router.push("/projects");
+    } finally {
+      isUnarchiving.value = false;
+    }
+  } else {
+    // Show confirmation modal for archiving
+    showArchiveModal.value = true;
   }
 };
+
+onMounted(() => {
+  projectStore.fetchProjectById(route.params.projectId as string);
+});
 </script>
