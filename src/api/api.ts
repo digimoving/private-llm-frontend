@@ -204,7 +204,7 @@ export const projectsApi = {
     await delay(800);
     const newProject: Project = {
       ...projectData,
-      id: `proj_${String(projects.length + 1).padStart(2, "0")}`,
+      id: `${String(projects.length + 1)}`,
       dateCreated: new Date().toISOString(),
       lastUpdated: new Date().toISOString(),
     };

@@ -88,6 +88,10 @@ export const useProjectsStore = defineStore("projects", {
   },
 
   actions: {
+    async setCurrentProject(id: string) {
+      this.currentProject =
+        this.projects.find((project) => project.id === id) ?? null;
+    },
     // Fetch all projects
     async fetchProjects(params = {}) {
       try {
@@ -110,6 +114,7 @@ export const useProjectsStore = defineStore("projects", {
       try {
         this.loading.project = true;
         this.error = null;
+        this.setCurrentProject(id);
         const response = await projectsApi.get(id);
         this.currentProject = response.data;
       } catch (error) {

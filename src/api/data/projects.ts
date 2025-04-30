@@ -2,7 +2,7 @@ import type { Project } from "../../types/types";
 
 export const projects: Project[] = [
   {
-    id: "proj_01",
+    id: "1",
     name: "Customer Service Bot",
     description: "AI-powered customer service chatbot",
     archived: false,
@@ -11,7 +11,7 @@ export const projects: Project[] = [
     tags: ["customer-service", "chatbot"],
   },
   {
-    id: "proj_02",
+    id: "2",
     name: "Product Recommender",
     description: "Personalized product recommendations engine",
     archived: false,
@@ -20,7 +20,7 @@ export const projects: Project[] = [
     tags: ["recommendations", "e-commerce"],
   },
   {
-    id: "proj_03",
+    id: "3",
     name: "Content Moderator",
     description: "Automated content moderation system",
     archived: true,

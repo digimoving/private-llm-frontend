@@ -1,3 +1,4 @@
+// Router configuration
 import { createRouter, createWebHistory } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
@@ -43,30 +44,39 @@ const routes: RouteRecordRaw[] = [
           title: "LLM Resources",
         },
       },
-      // {
-      //   path: "metrics",
-      //   name: "project-metrics",
-      //   component: () => import("../pages/project/MetricsPage.vue"),
-      //   meta: {
-      //     title: "Usage Metrics",
-      //   },
-      // },
-      // {
-      //   path: "files",
-      //   name: "project-files",
-      //   component: () => import("../pages/project/FilesPage.vue"),
-      //   meta: {
-      //     title: "Project Files",
-      //   },
-      // },
-      // {
-      //   path: "settings",
-      //   name: "project-settings",
-      //   component: () => import("../pages/project/SettingsPage.vue"),
-      //   meta: {
-      //     title: "Project Settings",
-      //   },
-      // },
+      {
+        path: "llms/archived",
+        name: "project-archived-llms",
+        component: () => import("../pages/project/LLMResourcesPage.vue"),
+        meta: {
+          title: "Archived LLM Resources",
+          archived: true,
+        },
+      },
+      {
+        path: "metrics",
+        name: "project-metrics",
+        component: () => import("../pages/project/MetricsPage.vue"),
+        meta: {
+          title: "Usage Metrics",
+        },
+      },
+      {
+        path: "files",
+        name: "project-files",
+        component: () => import("../pages/project/FilesPage.vue"),
+        meta: {
+          title: "Project Files",
+        },
+      },
+      {
+        path: "settings",
+        name: "project-settings",
+        component: () => import("../pages/project/SettingsPage.vue"),
+        meta: {
+          title: "Project Settings",
+        },
+      },
     ],
   },
 ];
