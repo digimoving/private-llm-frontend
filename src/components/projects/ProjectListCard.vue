@@ -1,6 +1,7 @@
 <template>
   <div
-    class="relative bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow duration-200"
+    class="relative bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow duration-200 cursor-pointer"
+    @click="navigateToProject"
   >
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -16,15 +17,7 @@
           />
         </div>
       </div>
-      <ProjectActionsMenu
-        :project="project"
-        @menu-click="
-          $emit('menuClick', {
-            action: $event.action as 'edit' | 'archive' | 'delete',
-            project,
-          })
-        "
-      />
+      <ProjectActionsMenu :project="project" @menu-click="handleMenuClick" />
     </div>
   </div>
 </template>
@@ -34,15 +27,32 @@ import type { Project } from "../../types/types";
 import StatusChip from "../global/StatusChip.vue";
 import ProjectActionsMenu from "./ProjectActionsMenu.vue";
 import Chip from "../ui/Chip.vue";
+import { useRouter } from "vue-router";
 
-defineProps<{
+const router = useRouter();
+const props = defineProps<{
   project: Project;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   (
     e: "menuClick",
     data: { action: "edit" | "archive" | "delete"; project: Project }
   ): void;
 }>();
+
+const navigateToProject = () => {
+  router.push(`/projects/${props.project.id}/llms`);
+};
+
+const handleMenuClick = (event: {
+  action: "edit" | "archive" | "delete";
+  project: Project;
+}) => {
+  // Stop the click event from bubbling up to the card
+  if (event instanceof Event) {
+    event.stopPropagation();
+  }
+  emit("menuClick", event);
+};
 </script>

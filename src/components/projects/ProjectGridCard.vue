@@ -1,18 +1,11 @@
 <template>
   <div
-    class="relative bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200 flex flex-col h-full"
+    class="relative bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200 flex flex-col h-full cursor-pointer"
+    @click="navigateToProject"
   >
     <div class="flex items-center justify-between">
       <StatusChip :is-archived="project.archived" />
-      <ProjectActionsMenu
-        :project="project"
-        @menu-click="
-          $emit('menuClick', {
-            action: $event.action as 'edit' | 'archive' | 'delete',
-            project,
-          })
-        "
-      />
+      <ProjectActionsMenu :project="project" @menu-click="handleMenuClick" />
     </div>
 
     <h3 class="font-semibold text-gray-900 text-lg">
@@ -40,12 +33,13 @@ import Chip from "../ui/Chip.vue";
 import StatusChip from "../global/StatusChip.vue";
 import ProjectActionsMenu from "./ProjectActionsMenu.vue";
 import { useFormattedTimeAgo } from "../../composables/useFormattedTimeAgo";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 const props = defineProps<{
   project: Project;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   (
     e: "menuClick",
     data: { action: "edit" | "archive" | "delete"; project: Project }
@@ -53,4 +47,16 @@ defineEmits<{
 }>();
 
 const timeAgo = useFormattedTimeAgo(props.project.lastUpdated);
+
+const navigateToProject = () => {
+  router.push(`/projects/${props.project.id}/llms`);
+};
+
+const handleMenuClick = (event: {
+  action: "edit" | "archive" | "delete";
+  project: Project;
+}) => {
+  // Stop the click event from bubbling up to the card
+  emit("menuClick", event);
+};
 </script>

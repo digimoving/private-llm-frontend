@@ -5,21 +5,25 @@
     }}</label>
     <textarea
       v-if="type === 'textarea'"
+      ref="inputRef"
       :value="modelValue"
       @input="
         $emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)
       "
+      @blur="$emit('blur', $event)"
       :placeholder="placeholder"
       :rows="rows"
       class="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
     />
     <input
       v-else
+      ref="inputRef"
       :type="type"
       :value="modelValue"
       @input="
         $emit('update:modelValue', ($event.target as HTMLInputElement).value)
       "
+      @blur="$emit('blur', $event)"
       :placeholder="placeholder"
       class="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
     />
@@ -30,6 +34,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+
 interface Props {
   modelValue: string;
   label?: string;
@@ -47,7 +53,14 @@ withDefaults(defineProps<Props>(), {
 
 defineEmits<{
   (e: "update:modelValue", value: string): void;
+  (e: "blur", event: FocusEvent): void;
 }>();
+
+const inputRef = ref<HTMLInputElement | HTMLTextAreaElement>();
+
+defineExpose({
+  focus: () => inputRef.value?.focus(),
+});
 </script>
 
 <style scoped>

@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { reactive, watch } from "vue";
-import FormInput from "./FormInput.vue";
+import FormInput from "./Input.vue";
 
 export interface FormField {
   name: string;

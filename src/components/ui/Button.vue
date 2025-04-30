@@ -49,7 +49,12 @@
 <script setup lang="ts">
 import type { FunctionalComponent } from "vue";
 
-export type ButtonVariant = "primary" | "secondary" | "danger" | "flat";
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "danger"
+  | "flat"
+  | "icon";
 export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 interface ButtonProps {
@@ -77,7 +82,8 @@ const sizeClasses = {
   md: "px-2.5 py-1.5 text-sm rounded-md",
   lg: "px-3 py-2 text-sm rounded-md",
   xl: "px-3.5 py-2.5 text-sm rounded-md",
-}[props.size];
+  icon: "p-1.5",
+}[props.variant === "icon" ? "icon" : props.size];
 
 const variantClasses = {
   primary:
@@ -87,5 +93,6 @@ const variantClasses = {
   danger:
     "bg-error-600 text-white [&:not(:disabled)]:hover:bg-error-500 focus-visible:outline-error-600 [&:not(:disabled)]:active:bg-error-700",
   flat: "bg-transparent text-primary-600 [&:not(:disabled)]:hover:text-primary-700 [&:not(:disabled)]:hover:bg-primary-50 focus-visible:outline-primary-600 shadow-none",
+  icon: "text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full",
 }[props.variant];
 </script>

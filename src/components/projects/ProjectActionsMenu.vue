@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click.stop>
     <ActionMenu :items="menuItems" @menu-click="handleMenuClick" />
     <ArchiveProjectModal v-model="showArchiveModal" :project-id="project.id" />
     <DeleteProjectModal v-model="showDeleteModal" :project-id="project.id" />
@@ -13,7 +13,7 @@ import {
   ArchiveBoxArrowDownIcon,
   TrashIcon,
 } from "@heroicons/vue/24/outline";
-import type { Project } from "../../api/data/projects";
+import type { Project } from "../../types/types";
 import { computed, ref } from "vue";
 import ArchiveProjectModal from "../modals/ArchiveProjectModal.vue";
 import DeleteProjectModal from "../modals/DeleteProjectModal.vue";

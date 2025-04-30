@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import Modal from "../ui/Modal.vue";
-import FormInput from "../ui/FormInput.vue";
+import FormInput from "../ui/Input.vue";
 
 interface Props {
   modelValue: boolean;
