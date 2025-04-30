@@ -23,6 +23,9 @@
 import { computed } from "vue";
 import ConfirmationModal from "../modals/ConfirmationModal.vue";
 import { useProjectsStore } from "../../stores/projects";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const props = defineProps<{
   modelValue: boolean;
@@ -34,7 +37,12 @@ const emit = defineEmits<{
 }>();
 
 const projectsStore = useProjectsStore();
-const project = computed(() => projectsStore.getProjectById(props.projectId));
+const project = computed(() => {
+  return (
+    projectsStore.getProjectById(props.projectId) ??
+    projectsStore.currentProject
+  );
+});
 
 const handleConfirm = async () => {
   if (project.value) {
@@ -43,5 +51,6 @@ const handleConfirm = async () => {
     });
   }
   emit("update:modelValue", false);
+  router.push("/projects");
 };
 </script>
