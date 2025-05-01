@@ -8,12 +8,11 @@
           :disabled="disabled"
           :icon="FunnelIcon"
         >
-          <div class="flex items-center gap-1.5">
+          <div class="flex items-center gap-1.5 ml-2">
             <span class="truncate">{{
               selectedCount ? "Filters" : "Filter"
             }}</span>
             <span
-              v-if="selectedCount"
               class="min-w-[1.25rem] h-5 flex items-center justify-center rounded-full bg-primary-50 px-1.5 text-xs font-medium text-primary-700"
             >
               {{ selectedCount }}

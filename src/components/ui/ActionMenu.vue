@@ -25,7 +25,8 @@
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import { EllipsisHorizontalIcon } from "@heroicons/vue/24/outline";
-import type { Component } from "vue";
+import type { FunctionalComponent } from "vue";
+import Button from "./Button.vue";
 
 export interface MenuItemType {
   action: string;
@@ -33,7 +34,7 @@ export interface MenuItemType {
   class: string;
   activeClass: string;
   showIf?: () => boolean;
-  icon: Component;
+  icon: FunctionalComponent;
 }
 
 interface Props {

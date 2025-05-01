@@ -49,6 +49,7 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { UserCircleIcon } from "@heroicons/vue/24/outline";
 import type { FunctionalComponent } from "vue";
+import Button from "./Button.vue";
 
 export interface MenuItemType {
   label: string;
