@@ -3,6 +3,9 @@
   <div class="space-y-8">
     <!-- Desktop Controls -->
     <div class="hidden lg:flex items-center justify-end gap-4 mb-4">
+      <div class="sm:flex-auto">
+        <h1 class="text-xl font-semibold text-gray-900">LLM Resources</h1>
+      </div>
       <div class="flex items-center gap-2">
         <ToggleArchivedCheckbox v-model="showArchived" :disabled="isDisabled" />
         <FilterDropdown
