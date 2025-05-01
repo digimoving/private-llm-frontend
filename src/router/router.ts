@@ -44,15 +44,7 @@ const routes: RouteRecordRaw[] = [
           title: "LLM Resources",
         },
       },
-      {
-        path: "llms/archived",
-        name: "project-archived-llms",
-        component: () => import("../pages/project/LLMResourcesPage.vue"),
-        meta: {
-          title: "Archived LLM Resources",
-          archived: true,
-        },
-      },
+
       {
         path: "metrics",
         name: "project-metrics",

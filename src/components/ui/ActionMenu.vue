@@ -1,10 +1,18 @@
 <template>
   <Menu as="div" class="relative">
-    <MenuButton class="p-1 rounded-full hover:bg-gray-100 cursor-pointer">
+    <MenuButton
+      class="p-1 rounded-full"
+      :class="[
+        disabled
+          ? 'opacity-50 cursor-not-allowed'
+          : 'hover:bg-gray-100 cursor-pointer',
+      ]"
+      :disabled="disabled"
+    >
       <EllipsisHorizontalIcon class="w-5 h-5 text-gray-500" />
     </MenuButton>
     <MenuItems
-      class="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-10"
+      class="absolute right-0 mt-1 w-40 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-10"
     >
       <template v-for="item in items" :key="item.action">
         <MenuItem v-if="!item.showIf || item.showIf()" v-slot="{ active }">
@@ -12,8 +20,12 @@
             variant="flat"
             :icon="item.icon"
             :text="item.label"
-            class="w-full text-left"
-            :class="[active ? item.activeClass : item.class]"
+            :class="[
+              'w-full text-left',
+              active && !disabled ? item.activeClass : item.class,
+              disabled || item.disabled ? 'opacity-50 cursor-not-allowed' : '',
+            ]"
+            :disabled="disabled || item.disabled"
             @click="handleMenuClick(item.action)"
           />
         </MenuItem>
@@ -35,19 +47,24 @@ export interface MenuItemType {
   activeClass: string;
   showIf?: () => boolean;
   icon: FunctionalComponent;
+  disabled?: boolean;
 }
 
 interface Props {
   items: MenuItemType[];
+  disabled?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false,
+});
 
 const emit = defineEmits<{
   (e: "menuClick", action: string): void;
 }>();
 
 const handleMenuClick = (action: string) => {
+  if (props.disabled) return;
   emit("menuClick", action);
 };
 </script>

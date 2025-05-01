@@ -30,7 +30,10 @@
         </svg>
       </div>
     </div>
-    <label for="show-archived" class="text-sm font-medium text-gray-900"
+    <label
+      for="show-archived"
+      class="text-sm font-medium"
+      :class="disabled ? 'text-gray-400' : 'text-gray-900'"
       >Show archived</label
     >
   </div>

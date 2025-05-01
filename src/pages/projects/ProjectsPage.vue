@@ -10,6 +10,8 @@
         <FilterDropdown
           :show-archived="showArchived"
           :disabled="projectsStore.loading.projects"
+          :tags="availableTags"
+          :status-options="statusOptions"
           @update:filters="handleFiltersUpdate"
         />
         <SortDropdown
@@ -35,16 +37,9 @@
         :show-archived="showArchived"
         :selected-filters="selectedFilters"
         :sort-by="sortBy"
-        resourceType="project"
+        resource-type="project"
         @add-resource="handleAddProject"
-        @menu-click="
-          ($event) =>
-            handleMenuClick({
-              action: $event.action,
-              resource: $event.resource,
-              resourceType: 'project',
-            })
-        "
+        @menu-click="handleMenuClick"
       />
     </div>
 
@@ -87,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import FilterDropdown from "../../components/controls/FilterDropdown.vue";
 import SortDropdown from "../../components/controls/SortDropdown.vue";
 import ToggleArchivedCheckbox from "../../components/controls/ToggleArchivedCheckbox.vue";
@@ -102,6 +97,14 @@ import { useProjectsStore } from "../../stores/projects";
 import type { Project, LLMResource } from "../../types/types";
 
 const projectsStore = useProjectsStore();
+
+// Get all unique tags from projects
+const availableTags = computed(() => {
+  return projectsStore.allTags(showArchived.value);
+});
+
+// Status options for projects
+const statusOptions = computed(() => ["active", "archived", "all"]);
 
 // Load projects when component mounts
 onMounted(async () => {
@@ -145,7 +148,7 @@ const handleAddProject = () => {
 };
 
 const handleMenuClick = (data: {
-  action: "edit" | "archive" | "delete";
+  action: "edit" | "archive" | "delete" | "toggleActive";
   resource: Project | LLMResource;
   resourceType: "project" | "llm";
 }) => {
@@ -160,6 +163,7 @@ const handleMenuClick = (data: {
   } else if (data.action === "delete") {
     showDeleteModal.value = true;
   }
+  // Ignore toggleActive for projects
 };
 </script>
 

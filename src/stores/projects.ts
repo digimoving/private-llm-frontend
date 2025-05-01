@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { projectsApi } from "../api/api";
 import type { Project } from "../types/types";
+import { useLLMsStore } from "./llms";
 
 interface LoadingState {
   projects: boolean;
@@ -134,7 +135,10 @@ export const useProjectsStore = defineStore("projects", {
       try {
         this.loading.create = true;
         this.error = null;
-        const response = await projectsApi.create(projectData);
+        const response = await projectsApi.create({
+          ...projectData,
+          lastUpdated: new Date().toISOString(),
+        });
         this.projects.unshift(response.data);
         return response.data;
       } catch (error) {
@@ -153,13 +157,46 @@ export const useProjectsStore = defineStore("projects", {
         this.loading.update = true;
         this.error = null;
         const response = await projectsApi.update(id, projectData);
-        const index = this.projects.findIndex((p) => p.id === id);
-        if (index !== -1) {
-          this.projects[index] = response.data;
+
+        // If project is being archived or unarchived, reposition it in the array
+        if ("archived" in projectData) {
+          const index = this.projects.findIndex((p) => p.id === id);
+          if (index !== -1) {
+            const [project] = this.projects.splice(index, 1);
+            // Update with new data
+            Object.assign(project, response.data);
+            // Add to end if archived, beginning if unarchived
+            if (projectData.archived) {
+              this.projects.push(project);
+            } else {
+              this.projects.unshift(project);
+            }
+          }
+        } else {
+          // Regular update without repositioning
+          const index = this.projects.findIndex((p) => p.id === id);
+          if (index !== -1) {
+            this.projects[index] = response.data;
+          }
         }
+
         if (this.currentProject?.id === id) {
           this.currentProject = response.data;
         }
+
+        // Update LLMs in the store if they were archived
+        if (response.archivedLLMs) {
+          const llmsStore = useLLMsStore();
+          response.archivedLLMs.forEach((llm) => {
+            const index = llmsStore.llms.findIndex((l) => l.id === llm.id);
+            if (index !== -1) {
+              // Remove and add to end of array
+              llmsStore.llms.splice(index, 1);
+              llmsStore.llms.push(llm);
+            }
+          });
+        }
+
         return response.data;
       } catch (error) {
         this.error =

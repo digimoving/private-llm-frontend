@@ -58,6 +58,13 @@ const props = defineProps<{
 const projectsStore = useProjectsStore();
 const llmsStore = useLLMsStore();
 
+const getUpdateDate = (resource: Project | LLMResource) => {
+  if ("updatedAt" in resource) {
+    return resource.updatedAt;
+  }
+  return resource.lastUpdated;
+};
+
 const resources = computed(() => {
   const store = props.resourceType === "project" ? projectsStore : llmsStore;
   if (!store) return [];
@@ -69,7 +76,8 @@ const resources = computed(() => {
           props.selectedFilters.tags
         )
       : llmsStore.llms.filter((llm: LLMResource) => {
-          if (props.showArchived !== llm.archived) return false;
+          if (!props.showArchived && llm.archived) return false;
+
           if (
             props.selectedFilters.tags.length &&
             !props.selectedFilters.tags.includes("all")
@@ -91,16 +99,16 @@ const resources = computed(() => {
         return (
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         );
-      case "recently-updated":
-        return (
-          new Date(b.updatedAt || b.lastUpdated).getTime() -
-          new Date(a.updatedAt || a.lastUpdated).getTime()
-        );
-      case "least-recently-updated":
-        return (
-          new Date(a.updatedAt || a.lastUpdated).getTime() -
-          new Date(b.updatedAt || b.lastUpdated).getTime()
-        );
+      case "recently-updated": {
+        const bDate = getUpdateDate(b);
+        const aDate = getUpdateDate(a);
+        return new Date(bDate).getTime() - new Date(aDate).getTime();
+      }
+      case "least-recently-updated": {
+        const bDate = getUpdateDate(b);
+        const aDate = getUpdateDate(a);
+        return new Date(aDate).getTime() - new Date(bDate).getTime();
+      }
       case "name-asc":
         return a.name.localeCompare(b.name);
       case "name-desc":
@@ -116,7 +124,7 @@ defineEmits<{
   (
     e: "menu-click",
     data: {
-      action: "edit" | "archive" | "delete";
+      action: "edit" | "archive" | "delete" | "toggleActive";
       resource: Project | LLMResource;
       resourceType: "project" | "llm";
     }

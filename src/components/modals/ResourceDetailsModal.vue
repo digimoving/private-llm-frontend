@@ -20,7 +20,7 @@
             : 'Configure a new AI model to use in your project.'
       "
       :fields="formFields"
-      :initial-values="initialValues"
+      :initial-values="initialFormValues"
       :use-grid="resourceType === 'LLM'"
       @update="handleFormUpdate"
     />
@@ -28,12 +28,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import Modal from "../ui/Modal.vue";
 import Form from "../ui/Form.vue";
 import type { FormField } from "../ui/Form.vue";
 import { useProjectsStore } from "../../stores/projects";
 import { useLLMsStore } from "../../stores/llms";
+import type { Project, LLMResource } from "../../types/types";
 
 interface Props {
   modelValue: boolean;
@@ -88,7 +89,10 @@ const getLLMFields = (): FormField[] => [
     label: "LLM Type",
     type: "select",
     placeholder: "Select model type",
-    options: [], // TODO: Add LLM type options
+    options: [
+      { value: "gpt-4", label: "GPT-4" },
+      { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo" },
+    ],
   },
   {
     name: "description",
@@ -152,7 +156,7 @@ const defaultProjectValues: ProjectFormValues = {
 
 const defaultLLMValues: LLMFormValues = {
   name: "",
-  llmType: "",
+  llmType: "gpt-4",
   description: "",
   maxTokens: "4029",
   temperature: "0.7",
@@ -165,42 +169,44 @@ const getDefaultValues = () =>
 
 const formValues = ref<FormValues>(getDefaultValues());
 
-const initialValues = computed(() => {
-  if (!resource.value) return undefined;
+const initialFormValues = computed(() => {
+  const values = resource.value
+    ? props.resourceType === "Project"
+      ? {
+          name: (resource.value as Project).name,
+          description: (resource.value as Project).description || "",
+          tags: (resource.value as Project).tags?.join(", ") || "",
+        }
+      : {
+          name: (resource.value as LLMResource).name,
+          llmType: (resource.value as LLMResource).type,
+          description: (resource.value as LLMResource).description || "",
+          maxTokens:
+            (resource.value as LLMResource).maxTokens?.toString() || "4029",
+          temperature:
+            (resource.value as LLMResource).temperature?.toString() || "0.7",
+          tags: (resource.value as LLMResource).tags?.join(", ") || "",
+          trainingFiles:
+            (resource.value as LLMResource).trainingFiles?.[0] || "",
+        }
+    : getDefaultValues();
 
-  if (props.resourceType === "Project") {
-    return {
-      name: resource.value.name,
-      description: resource.value.description,
-      tags: resource.value.tags.join(", "),
-    };
-  }
-
-  // TODO: Handle LLM initial values when store is available
-  return undefined;
+  return Object.entries(values).reduce(
+    (acc, [key, value]) => {
+      acc[key] = value;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
 });
 
-// Watch for changes to resource or modal open/close
-watch(
-  [resource, () => props.modelValue],
-  ([newResource, newModelValue]) => {
-    if (newModelValue) {
-      if (newResource && props.resourceType === "Project") {
-        formValues.value = {
-          name: newResource.name,
-          description: newResource.description,
-          tags: newResource.tags.join(", "),
-        };
-      } else {
-        formValues.value = getDefaultValues();
-      }
-    }
-  },
-  { immediate: true }
-);
-
 const isValid = computed(() => {
-  return formValues.value.name.trim() !== "";
+  const values = formValues.value;
+  if (props.resourceType === "Project") {
+    return values.name.trim() !== "";
+  }
+  const llmValues = values as LLMFormValues;
+  return llmValues.name.trim() !== "" && llmValues.llmType !== "";
 });
 
 const loading = computed(() => {
@@ -209,19 +215,36 @@ const loading = computed(() => {
       ? projectsStore.loading.update
       : projectsStore.loading.create;
   }
-  return llmsStore.isLoading;
+  return resource.value ? llmsStore.loading.update : llmsStore.loading.create;
 });
 
 const handleFormUpdate = (values: Record<string, string>) => {
-  formValues.value = { ...formValues.value, ...values };
+  if (props.resourceType === "Project") {
+    formValues.value = {
+      name: values.name || "",
+      description: values.description || "",
+      tags: values.tags || "",
+    };
+  } else {
+    formValues.value = {
+      name: values.name || "",
+      llmType: values.llmType || "gpt-4",
+      description: values.description || "",
+      maxTokens: values.maxTokens || "4029",
+      temperature: values.temperature || "0.7",
+      tags: values.tags || "",
+      trainingFiles: values.trainingFiles || "",
+    };
+  }
 };
 
 const handleSubmit = async () => {
   if (props.resourceType === "Project") {
+    const values = formValues.value as ProjectFormValues;
     const projectData = {
-      name: formValues.value.name.trim(),
-      description: formValues.value.description.trim(),
-      tags: formValues.value.tags
+      name: values.name.trim(),
+      description: values.description.trim(),
+      tags: values.tags
         .split(",")
         .map((tag) => tag.trim())
         .filter(Boolean),
@@ -235,22 +258,18 @@ const handleSubmit = async () => {
       await projectsStore.createProject(projectData);
     }
   } else {
-    // Type guard to ensure we have LLM form values
-    if (!("llmType" in formValues.value)) return;
-
+    const values = formValues.value as LLMFormValues;
     const llmData = {
-      name: formValues.value.name.trim(),
-      type: formValues.value.llmType,
-      description: formValues.value.description.trim(),
-      maxTokens: parseInt(formValues.value.maxTokens),
-      temperature: parseFloat(formValues.value.temperature),
-      tags: formValues.value.tags
+      name: values.name.trim(),
+      type: values.llmType,
+      description: values.description.trim(),
+      maxTokens: parseInt(values.maxTokens),
+      temperature: parseFloat(values.temperature),
+      tags: values.tags
         .split(",")
         .map((tag) => tag.trim())
         .filter(Boolean),
-      trainingFiles: formValues.value.trainingFiles
-        ? [formValues.value.trainingFiles]
-        : [],
+      trainingFiles: values.trainingFiles ? [values.trainingFiles] : [],
     };
 
     if (resource.value) {

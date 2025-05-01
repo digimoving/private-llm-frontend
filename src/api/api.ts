@@ -7,12 +7,13 @@ import type {
 } from "../types/types";
 import { projects } from "./data/projects";
 import { notifications } from "./data/notifications";
+import { llms } from "./data/llms";
 
 // Simulated delay to mimic API calls
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Mock LLM data
-const llms: LLMResource[] = [];
+// Use the imported llms data
+let llmsData = [...llms];
 
 export const llmsApi = {
   // List LLMs in a project
@@ -21,7 +22,7 @@ export const llmsApi = {
     params: LLMListParams = {}
   ): Promise<LLMResource[]> {
     await delay(300);
-    let filtered = llms.filter((llm) => llm.projectId === projectId);
+    let filtered = llmsData.filter((llm) => llm.projectId === projectId);
 
     // Apply status filter
     if (params.status && params.status !== "all") {
@@ -75,7 +76,9 @@ export const llmsApi = {
   // Get a single LLM
   async get(projectId: string, llmId: string): Promise<LLMResource> {
     await delay(300);
-    const llm = llms.find((l) => l.projectId === projectId && l.id === llmId);
+    const llm = llmsData.find(
+      (l) => l.projectId === projectId && l.id === llmId
+    );
     if (!llm) throw new Error("LLM not found");
     return llm;
   },
@@ -88,14 +91,14 @@ export const llmsApi = {
     await delay(500);
     const newLlm: LLMResource = {
       ...input,
-      id: `llm_${String(llms.length + 1).padStart(3, "0")}`,
+      id: `llm_${String(llmsData.length + 1).padStart(3, "0")}`,
       projectId,
       archived: false,
       paused: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    llms.push(newLlm);
+    llmsData.push(newLlm);
     return newLlm;
   },
 
@@ -106,35 +109,37 @@ export const llmsApi = {
     input: LLMResourceInput
   ): Promise<LLMResource> {
     await delay(400);
-    const index = llms.findIndex(
+    const index = llmsData.findIndex(
       (l) => l.projectId === projectId && l.id === llmId
     );
     if (index === -1) throw new Error("LLM not found");
 
     const updatedLlm: LLMResource = {
-      ...llms[index],
+      ...llmsData[index],
       ...input,
       updatedAt: new Date().toISOString(),
     };
-    llms[index] = updatedLlm;
+    llmsData[index] = updatedLlm;
     return updatedLlm;
   },
 
   // Delete an LLM
   async delete(projectId: string, llmId: string): Promise<void> {
     await delay(300);
-    const index = llms.findIndex(
+    const index = llmsData.findIndex(
       (l) => l.projectId === projectId && l.id === llmId
     );
     if (index !== -1) {
-      llms.splice(index, 1);
+      llmsData.splice(index, 1);
     }
   },
 
   // Archive an LLM
   async archive(projectId: string, llmId: string): Promise<void> {
     await delay(300);
-    const llm = llms.find((l) => l.projectId === projectId && l.id === llmId);
+    const llm = llmsData.find(
+      (l) => l.projectId === projectId && l.id === llmId
+    );
     if (llm) {
       llm.archived = true;
       llm.updatedAt = new Date().toISOString();
@@ -144,7 +149,9 @@ export const llmsApi = {
   // Unarchive an LLM
   async unarchive(projectId: string, llmId: string): Promise<void> {
     await delay(300);
-    const llm = llms.find((l) => l.projectId === projectId && l.id === llmId);
+    const llm = llmsData.find(
+      (l) => l.projectId === projectId && l.id === llmId
+    );
     if (llm) {
       llm.archived = false;
       llm.updatedAt = new Date().toISOString();
@@ -154,7 +161,9 @@ export const llmsApi = {
   // Pause an LLM
   async pause(projectId: string, llmId: string): Promise<void> {
     await delay(300);
-    const llm = llms.find((l) => l.projectId === projectId && l.id === llmId);
+    const llm = llmsData.find(
+      (l) => l.projectId === projectId && l.id === llmId
+    );
     if (llm) {
       llm.paused = true;
       llm.updatedAt = new Date().toISOString();
@@ -164,7 +173,9 @@ export const llmsApi = {
   // Resume an LLM
   async resume(projectId: string, llmId: string): Promise<void> {
     await delay(300);
-    const llm = llms.find((l) => l.projectId === projectId && l.id === llmId);
+    const llm = llmsData.find(
+      (l) => l.projectId === projectId && l.id === llmId
+    );
     if (llm) {
       llm.paused = false;
       llm.updatedAt = new Date().toISOString();
@@ -199,13 +210,16 @@ export const projectsApi = {
 
   // Create a new project
   async create(
-    projectData: Omit<Project, "id" | "dateCreated" | "lastUpdated">
+    projectData: Omit<Project, "id" | "createdAt" | "updatedAt">
   ): Promise<{ data: Project }> {
     await delay(800);
     const newProject: Project = {
-      ...projectData,
-      id: `${String(projects.length + 1)}`,
-      dateCreated: new Date().toISOString(),
+      id: `project_${String(projects.length + 1).padStart(3, "0")}`,
+      name: projectData.name,
+      description: projectData.description || "",
+      tags: projectData.tags || [],
+      archived: false,
+      createdAt: new Date().toISOString(),
       lastUpdated: new Date().toISOString(),
     };
     projects.push(newProject);
@@ -216,7 +230,7 @@ export const projectsApi = {
   async update(
     id: string,
     projectData: Partial<Project>
-  ): Promise<{ data: Project }> {
+  ): Promise<{ data: Project; archivedLLMs?: LLMResource[] }> {
     await delay(600);
     const index = projects.findIndex((p) => p.id === id);
     if (index === -1) throw new Error("Project not found");
@@ -227,7 +241,26 @@ export const projectsApi = {
       lastUpdated: new Date().toISOString(),
     };
     projects[index] = updatedProject;
-    return { data: updatedProject };
+
+    // If project is being archived, archive all associated LLMs
+    let archivedLLMs: LLMResource[] | undefined;
+    if (projectData.archived === true) {
+      archivedLLMs = [];
+      llmsData = llmsData.map((llm) => {
+        if (llm.projectId === id && !llm.archived) {
+          const updatedLLM = {
+            ...llm,
+            archived: true,
+            updatedAt: new Date().toISOString(),
+          };
+          archivedLLMs!.push(updatedLLM);
+          return updatedLLM;
+        }
+        return llm;
+      });
+    }
+
+    return { data: updatedProject, archivedLLMs };
   },
 
   // Delete a project

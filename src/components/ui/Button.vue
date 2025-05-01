@@ -2,7 +2,7 @@
   <button
     :type="type"
     :class="[
-      'inline-flex items-center justify-center font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200',
+      'inline-flex items-center font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200',
       sizeClasses,
       variantClasses,
       block ? 'w-full' : 'w-auto',
@@ -89,7 +89,7 @@ const variantClasses = {
     "bg-white text-gray-900 ring-1 ring-gray-300 ring-inset [&:not(:disabled)]:hover:bg-gray-50 [&:not(:disabled)]:active:bg-gray-100",
   danger:
     "bg-error-600 text-white [&:not(:disabled)]:hover:bg-error-500 focus-visible:outline-error-600 [&:not(:disabled)]:active:bg-error-700",
-  flat: "bg-transparent text-primary-600 [&:not(:disabled)]:hover:text-primary-700 [&:not(:disabled)]:hover:bg-primary-50 focus-visible:outline-primary-600 shadow-none",
+  flat: "bg-transparent text-gray-600 [&:not(:disabled)]:hover:text-gray-700 [&:not(:disabled)]:hover:bg-gray-50 focus-visible:outline-gray-600 shadow-none",
   icon: "text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full",
 }[props.variant];
 </script>

@@ -8,9 +8,9 @@
       :icon="Squares2X2Icon"
       @click="enabled = false"
       :class="[
-        !enabled ? 'bg-white shadow-sm' : 'hover:bg-gray-200',
+        !enabled ? 'bg-white shadow-sm' : disabled ? '' : 'hover:bg-gray-200',
         'h-full rounded-l-lg px-2.5',
-        disabled ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : '',
+        disabled ? 'opacity-50 cursor-not-allowed' : '',
       ]"
       :disabled="disabled"
       aria-label="Grid view"
@@ -21,9 +21,9 @@
       :icon="ListBulletIcon"
       @click="enabled = true"
       :class="[
-        enabled ? 'bg-white shadow-sm' : 'hover:bg-gray-200',
+        enabled ? 'bg-white shadow-sm' : disabled ? '' : 'hover:bg-gray-200',
         'h-full rounded-r-lg px-2.5',
-        disabled ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : '',
+        disabled ? 'opacity-50 cursor-not-allowed' : '',
       ]"
       :disabled="disabled"
       aria-label="List view"

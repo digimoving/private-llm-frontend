@@ -13,6 +13,7 @@
               selectedCount ? "Filters" : "Filter"
             }}</span>
             <span
+              v-if="selectedCount"
               class="min-w-[1.25rem] h-5 flex items-center justify-center rounded-full bg-primary-50 px-1.5 text-xs font-medium text-primary-700"
             >
               {{ selectedCount }}
@@ -75,7 +76,7 @@
                 </li>
               </ListboxOption>
               <ListboxOption
-                v-for="status in props.statusOptions"
+                v-for="status in statusOptions"
                 :key="status"
                 v-slot="{ active, selected }"
                 :value="status"
@@ -140,7 +141,7 @@
                 </li>
               </ListboxOption>
               <ListboxOption
-                v-for="tag in props.tags"
+                v-for="tag in tags"
                 :key="tag"
                 v-slot="{ active, selected }"
                 :value="tag"
@@ -214,16 +215,10 @@ const updateFilters = (newValue: string[]) => {
 
   // Handle "All" selections
   if (statusFilters.includes("all")) {
-    // Remove 'all' and add all status options
-    newFilters = newFilters
-      .filter((f) => f !== "all")
-      .concat(getAllStatusFilters());
+    newFilters = newFilters.filter((f) => !getAllStatusFilters().includes(f));
   }
   if (tagFilters.includes("all_tags")) {
-    // Remove 'all_tags' and add all tag options
-    newFilters = newFilters
-      .filter((f) => f !== "all_tags")
-      .concat(getAllTagFilters());
+    newFilters = newFilters.filter((f) => !getAllTagFilters().includes(f));
   }
 
   selectedFilters.value = [...new Set(newFilters)];
@@ -231,9 +226,7 @@ const updateFilters = (newValue: string[]) => {
   // Emit the filtered selections
   emit("update:filters", {
     status: statusFilters.includes("all") ? ["all"] : statusFilters,
-    tags: tagFilters.includes("all_tags")
-      ? ["all_tags"]
-      : tagFilters.filter((t) => props.tags?.includes(t)),
+    tags: tagFilters.includes("all_tags") ? ["all_tags"] : tagFilters,
   });
 };
 
