@@ -15,6 +15,25 @@
       :rows="rows"
       class="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
     />
+    <select
+      v-else-if="type === 'select'"
+      ref="inputRef"
+      :value="modelValue"
+      @input="
+        $emit('update:modelValue', ($event.target as HTMLSelectElement).value)
+      "
+      @blur="$emit('blur', $event)"
+      class="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+    >
+      <option value="" disabled selected>{{ placeholder }}</option>
+      <option
+        v-for="option in options"
+        :key="option.value"
+        :value="option.value"
+      >
+        {{ option.label }}
+      </option>
+    </select>
     <input
       v-else
       ref="inputRef"
@@ -39,16 +58,18 @@ import { ref } from "vue";
 interface Props {
   modelValue: string;
   label?: string;
-  type?: "text" | "textarea";
+  type?: "text" | "textarea" | "select" | "number";
   placeholder?: string;
   helperText?: string;
   rows?: number;
+  options?: { label: string; value: string }[];
 }
 
 withDefaults(defineProps<Props>(), {
   type: "text",
   placeholder: "",
   rows: 3,
+  options: () => [],
 });
 
 defineEmits<{
@@ -56,7 +77,9 @@ defineEmits<{
   (e: "blur", event: FocusEvent): void;
 }>();
 
-const inputRef = ref<HTMLInputElement | HTMLTextAreaElement>();
+const inputRef = ref<
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+>();
 
 defineExpose({
   focus: () => inputRef.value?.focus(),

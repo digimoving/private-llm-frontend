@@ -30,14 +30,13 @@
               class="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
             >
               <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
-                <button
-                  type="button"
-                  class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer"
+                <Button
+                  variant="icon"
+                  :icon="XMarkIcon"
                   @click="$emit('update:modelValue', false)"
-                >
-                  <span class="sr-only">Close</span>
-                  <XMarkIcon class="size-6" aria-hidden="true" />
-                </button>
+                  aria-label="Close modal"
+                  class="text-gray-400 hover:text-gray-500"
+                />
               </div>
 
               <div class="sm:flex sm:items-start">
@@ -65,16 +64,14 @@
                   :disabled="primaryButton.disabled"
                   :loading="primaryButton.loading"
                   @click="$emit('primary-click')"
-                >
-                  {{ primaryButton.text }}
-                </Button>
+                  :text="primaryButton.text"
+                />
                 <Button
                   v-if="secondaryButton"
                   variant="secondary"
                   @click="$emit('secondary-click')"
-                >
-                  {{ secondaryButton.text }}
-                </Button>
+                  :text="secondaryButton.text"
+                />
               </div>
             </DialogPanel>
           </TransitionChild>

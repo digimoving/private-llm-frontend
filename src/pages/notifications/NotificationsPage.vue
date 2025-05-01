@@ -2,16 +2,13 @@
   <div class="container mx-auto px-4 py-6">
     <div class="mb-8 flex items-center justify-between">
       <div class="flex space-x-1 rounded-lg bg-gray-100 p-1">
-        <button
+        <Button
           v-for="filter in filters"
           :key="filter.id"
           @click="activeFilter = filter.id"
-          :class="[
-            'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
-            activeFilter === filter.id
-              ? 'bg-white text-gray-900 shadow'
-              : 'text-gray-700 hover:bg-gray-200',
-          ]"
+          :variant="activeFilter === filter.id ? 'primary' : 'flat'"
+          size="sm"
+          class="!rounded-md"
         >
           {{ filter.label }}
           <span
@@ -20,11 +17,14 @@
           >
             {{ unreadCount }}
           </span>
-        </button>
+        </Button>
       </div>
-      <Button @click="markAllAsRead" variant="secondary" size="lg">
-        Mark all as read
-      </Button>
+      <Button
+        @click="markAllAsRead"
+        variant="secondary"
+        size="lg"
+        text="Mark all as read"
+      />
     </div>
     <!-- Loading state -->
     <div v-if="notificationsStore.loading" class="flex justify-center py-8">

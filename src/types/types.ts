@@ -12,11 +12,11 @@ export interface Notification {
 export interface Project {
   id: string;
   name: string;
-  description?: string;
+  description: string;
+  tags: string[];
   archived: boolean;
-  dateCreated: string;
+  createdAt: string;
   lastUpdated: string;
-  tags?: string[];
 }
 
 // LLM Types
@@ -49,4 +49,16 @@ export interface LLMListParams {
     | "name_desc"
     | "updated_desc"
     | "updated_asc";
+}
+
+export interface LLM {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  status: "active" | "paused";
+  archived: boolean;
+  createdAt: string;
+  lastUpdated: string;
+  projectId: string;
 }

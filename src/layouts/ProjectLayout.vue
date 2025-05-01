@@ -3,15 +3,15 @@
   <div class="min-h-screen bg-gray-50">
     <!-- Navigation Bar -->
     <div class="bg-white border-b border-gray-200">
-      <div
-        class="container mx-auto px-4 h-16 flex items-center justify-between"
-      >
+      <div class="mx-5 px-4 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-4">
           <!-- Back Button -->
-          <Button variant="icon" @click="$router.push('/projects')">
-            <ArrowLeftIcon class="h-5 w-5" />
-            <span class="sr-only">Back to Projects</span>
-          </Button>
+          <Button
+            variant="icon"
+            :icon="ArrowLeftIcon"
+            @click="$router.push('/projects')"
+            aria-label="Back to Projects"
+          />
 
           <!-- Project Title with Edit -->
           <div class="flex items-center">
@@ -26,10 +26,13 @@
               >
                 {{ projectStore.currentProject?.name }}
               </h1>
-              <Button variant="icon" @click="startEditing" class="ml-2">
-                <PencilSquareIcon class="h-5 w-5" />
-                <span class="sr-only">Edit Project Name</span>
-              </Button>
+              <Button
+                variant="icon"
+                :icon="PencilSquareIcon"
+                @click="startEditing"
+                class="ml-2"
+                aria-label="Edit Project Name"
+              />
             </div>
             <div v-if="isEditing" class="flex items-center">
               <Input
@@ -48,41 +51,42 @@
           variant="secondary"
           @click="handleArchiveClick"
           :loading="isUnarchiving"
-        >
-          {{ projectStore.currentProject?.archived ? "Unarchive" : "Archive" }}
-          Project
-        </Button>
+          :text="`${projectStore.currentProject?.archived ? 'Unarchive' : 'Archive'} Project`"
+        />
       </div>
 
       <!-- Tabs -->
-      <div class="container mx-auto px-4">
-        <nav class="flex space-x-1 border-b border-gray-200" aria-label="Tabs">
-          <RouterLink
-            v-for="tab in tabs"
-            :key="tab.name"
-            :to="tab.to"
-            :class="[
-              'px-3 py-2 text-sm font-medium',
-              isActiveTab(tab.to)
-                ? 'border-b-2 border-primary-500 text-primary-600'
-                : 'text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300',
-            ]"
-          >
-            {{ tab.name }}
-          </RouterLink>
-        </nav>
-      </div>
     </div>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-6">
-      <slot />
+    <main class="min-h-[calc(100vh-12rem)] mx-auto px-4 sm:px-6 lg:px-8">
+      <nav
+        class="flex space-x-1 border-b border-gray-200 mb-5 mt-3"
+        aria-label="Tabs"
+      >
+        <RouterLink
+          v-for="tab in tabs"
+          :key="tab.name"
+          :to="tab.to"
+          :class="[
+            'px-3 py-2 text-sm font-medium',
+            isActiveTab(tab.to)
+              ? 'border-b-2 border-primary-500 text-primary-600'
+              : 'text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300',
+          ]"
+        >
+          {{ tab.name }}
+        </RouterLink>
+      </nav>
+
+      <router-view />
     </main>
 
     <!-- Modals -->
-    <ArchiveProjectModal
+    <ArchiveResourceModal
       v-model="showArchiveModal"
-      :project-id="route.params.projectId as string"
+      :resource-id="route.params.projectId as string"
+      resource-type="Project"
     />
   </div>
 </template>
@@ -91,14 +95,16 @@
 import { ref, onMounted, nextTick, computed } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { useProjectsStore } from "../stores/projects";
+import { useLLMsStore } from "../stores/llms";
 import { ArrowLeftIcon, PencilSquareIcon } from "@heroicons/vue/24/outline";
 import Button from "../components/ui/Button.vue";
 import Input from "../components/ui/Input.vue";
-import ArchiveProjectModal from "../components/modals/ArchiveProjectModal.vue";
+import ArchiveResourceModal from "../components/modals/ArchiveResourceModal.vue";
 
 const route = useRoute();
 const router = useRouter();
 const projectStore = useProjectsStore();
+const llmsStore = useLLMsStore();
 
 const isEditing = ref(false);
 const editedTitle = ref("");
@@ -164,7 +170,9 @@ const handleArchiveClick = async () => {
   }
 };
 
-onMounted(() => {
-  projectStore.fetchProjectById(route.params.projectId as string);
+onMounted(async () => {
+  const projectId = route.params.projectId as string;
+  await projectStore.fetchProjectById(projectId);
+  llmsStore.setCurrentProject(projectId);
 });
 </script>

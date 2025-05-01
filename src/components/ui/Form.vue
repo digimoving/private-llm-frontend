@@ -5,16 +5,20 @@
       {{ subtitle }}
     </p>
 
-    <form @submit.prevent class="mt-4 space-y-4">
-      <FormInput
-        v-for="field in fields"
-        :key="field.name"
-        v-model="formData[field.name]"
-        :label="field.label"
-        :type="field.type"
-        :placeholder="field.placeholder"
-        :helper-text="field.helperText"
-      />
+    <form @submit.prevent class="mt-4">
+      <div :class="[useGrid ? 'grid grid-cols-2 gap-4' : 'space-y-4']">
+        <FormInput
+          v-for="field in fields"
+          :key="field.name"
+          v-model="formData[field.name]"
+          :label="field.label"
+          :type="field.type"
+          :placeholder="field.placeholder"
+          :helper-text="field.helperText"
+          :options="field.options"
+          :class="[field.type === 'textarea' ? 'col-span-2' : '']"
+        />
+      </div>
     </form>
   </div>
 </template>
@@ -26,9 +30,10 @@ import FormInput from "./Input.vue";
 export interface FormField {
   name: string;
   label: string;
-  type?: "text" | "textarea";
+  type?: "text" | "textarea" | "select" | "number";
   placeholder?: string;
   helperText?: string;
+  options?: { label: string; value: string }[];
 }
 
 interface Props {
@@ -36,10 +41,12 @@ interface Props {
   subtitle: string;
   fields: FormField[];
   initialValues?: Record<string, string>;
+  useGrid?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   initialValues: () => ({}),
+  useGrid: false,
 });
 
 const emit = defineEmits<{

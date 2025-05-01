@@ -27,23 +27,18 @@
           :key="index"
           v-slot="{ active, disabled }"
         >
-          <button
-            type="button"
+          <Button
+            variant="flat"
+            :icon="item.icon"
+            :text="item.label"
             @click="handleItemClick(item)"
             :class="[
               active ? 'bg-gray-100' : '',
-              'w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 cursor-pointer transition-colors duration-200',
+              'w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700',
               disabled ? 'opacity-50 cursor-not-allowed' : '',
             ]"
             :disabled="disabled"
-          >
-            <component
-              :is="item.icon"
-              class="h-5 w-5 text-gray-500"
-              v-if="item.icon"
-            />
-            {{ item.label }}
-          </button>
+          />
         </MenuItem>
       </MenuItems>
     </transition>

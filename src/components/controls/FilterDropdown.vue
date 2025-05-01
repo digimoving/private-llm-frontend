@@ -2,9 +2,13 @@
   <Listbox as="div" v-model="modelValue" multiple>
     <div class="relative">
       <ListboxButton as="div">
-        <Button variant="secondary" class="w-full" :disabled="disabled">
+        <Button
+          variant="secondary"
+          class="w-full"
+          :disabled="disabled"
+          :icon="FunnelIcon"
+        >
           <div class="flex items-center gap-1.5">
-            <FunnelIcon class="size-4 text-gray-500" aria-hidden="true" />
             <span class="truncate">{{
               selectedCount ? "Filters" : "Filter"
             }}</span>
@@ -35,9 +39,8 @@
               size="xs"
               @click="clearAllFilters"
               :disabled="disabled"
-            >
-              Clear all
-            </Button>
+              text="Clear all"
+            />
           </div>
 
           <!-- Status section -->
@@ -73,7 +76,7 @@
                 </li>
               </ListboxOption>
               <ListboxOption
-                v-for="status in statusOptions"
+                v-for="status in props.statusOptions"
                 :key="status"
                 v-slot="{ active, selected }"
                 :value="status"
@@ -138,7 +141,7 @@
                 </li>
               </ListboxOption>
               <ListboxOption
-                v-for="tag in tags"
+                v-for="tag in props.tags"
                 :key="tag"
                 v-slot="{ active, selected }"
                 :value="tag"
@@ -185,31 +188,27 @@ import {
 } from "@headlessui/vue";
 import { FunnelIcon } from "@heroicons/vue/24/outline";
 import { CheckIcon } from "@heroicons/vue/20/solid";
-import Button from "../../components/ui/Button.vue";
-import { useProjectsStore } from "../../stores/projects";
+import Button from "../ui/Button.vue";
 
-defineProps<{
+const props = defineProps<{
   disabled?: boolean;
+  showArchived?: boolean;
+  tags?: string[];
+  statusOptions?: string[];
 }>();
-
-const statusOptions = ["active", "archived"] as const;
-type Status = (typeof statusOptions)[number];
-
-const projectsStore = useProjectsStore();
-const tags = computed(() => projectsStore.allTags());
 
 const selectedFilters = ref<string[]>([]);
 
 // Helper functions to manage selections
-const getAllStatusFilters = () => [...statusOptions];
-const getAllTagFilters = () => [...tags.value];
+const getAllStatusFilters = () => props.statusOptions || [];
+const getAllTagFilters = () => props.tags || [];
 
 const updateFilters = (newValue: string[]) => {
   const statusFilters = newValue.filter((f) =>
-    ["all", ...statusOptions].includes(f)
+    ["all", ...(props.statusOptions || [])].includes(f)
   );
   const tagFilters = newValue.filter((f) =>
-    ["all_tags", ...tags.value].includes(f)
+    ["all_tags", ...(props.tags || [])].includes(f)
   );
 
   let newFilters = [...newValue];
@@ -235,16 +234,16 @@ const updateFilters = (newValue: string[]) => {
     status: statusFilters.includes("all") ? ["all"] : statusFilters,
     tags: tagFilters.includes("all_tags")
       ? ["all_tags"]
-      : tagFilters.filter((t) => tags.value.includes(t)),
+      : tagFilters.filter((t) => props.tags?.includes(t)),
   });
 };
 
 const selectedCount = computed(() => {
   const statusCount = selectedFilters.value.filter((f) =>
-    statusOptions.includes(f as Status)
+    props.statusOptions?.includes(f)
   ).length;
   const tagCount = selectedFilters.value.filter((f) =>
-    tags.value.includes(f)
+    props.tags?.includes(f)
   ).length;
   return statusCount + tagCount;
 });

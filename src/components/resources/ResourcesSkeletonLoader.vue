@@ -7,8 +7,9 @@
       }"
     >
       <!-- Add Project Card - Using the actual component -->
-      <AddNewProjectCard
+      <AddNewResourceCard
         :show-as-list="showAsList"
+        resource-type="project"
         @click="$emit('add-project')"
       />
 
@@ -69,8 +70,7 @@
 
 <script setup lang="ts">
 import SkeletonLoader from "../ui/SkeletonLoader.vue";
-import AddNewProjectCard from "./AddNewProjectCard.vue";
-
+import AddNewResourceCard from "./AddNewResourceCard.vue";
 defineProps<{
   showAsList: boolean;
 }>();

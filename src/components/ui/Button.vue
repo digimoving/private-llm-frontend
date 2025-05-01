@@ -36,13 +36,9 @@
         />
       </svg>
     </span>
-    <component
-      v-else-if="icon"
-      :is="icon"
-      class="w-4 h-4 mr-2"
-      aria-hidden="true"
-    />
-    <slot />
+    <component v-else-if="icon" :is="icon" class="w-4 h-4" aria-hidden="true" />
+    <span v-if="text" :class="{ 'ml-2': icon }">{{ text }}</span>
+    <slot v-else />
   </button>
 </template>
 
@@ -61,6 +57,7 @@ interface ButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
   icon?: FunctionalComponent;
+  text?: string;
   block?: boolean;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";

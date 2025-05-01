@@ -7,8 +7,8 @@
           <div class="shrink-0">
             <img
               class="h-8 w-auto"
-              src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-              alt="Your Company"
+              src="../../assets/logo.svg"
+              alt="Private LLM"
             />
           </div>
         </div>
@@ -59,37 +59,32 @@
             <div class="text-sm font-medium text-gray-400">user@name.com</div>
           </div>
           <!-- Mobile notification button -->
-          <button
-            type="button"
-            class="relative ml-auto flex rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-offset-2 focus:ring-offset-gray-800"
+          <Button
+            variant="icon"
+            :icon="BellIcon"
+            class="relative ml-auto text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-offset-2 focus:ring-offset-gray-800"
             @click="handleMobileNotificationClick"
+            aria-label="View notifications"
           >
-            <span class="sr-only">View notifications</span>
-            <BellIcon class="h-6 w-6" aria-hidden="true" />
             <span
               v-if="unreadCount > 0"
               class="absolute top-0.75 right-0.75 h-2.5 w-2.5 bg-primary-500 rounded-full"
             />
-          </button>
+          </Button>
         </div>
 
-        <!-- Mobile menu items -->
-        <div class="mt-3 space-y-1 px-2">
-          <DisclosureButton
+        <!-- TODO: Mobile menu items -->
+        <!-- <div class="mt-3 space-y-1 px-2">
+          <Button
             v-for="item in userMenuItems"
             :key="item.label"
-            as="button"
+            variant="flat"
+            :icon="item.icon"
+            :text="item.label"
             class="flex w-full items-center rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
             @click="item.onClick"
-          >
-            <component
-              :is="item.icon"
-              class="mr-3 h-5 w-5"
-              aria-hidden="true"
-            />
-            {{ item.label }}
-          </DisclosureButton>
-        </div>
+          />
+        </div> -->
       </div>
     </DisclosurePanel>
   </Disclosure>
@@ -112,6 +107,7 @@ import {
 } from "@heroicons/vue/24/outline";
 import { computed, ref } from "vue";
 import type { Notification } from "../notifications/NotificationsMenu.vue";
+import Button from "../ui/Button.vue";
 
 // Example notifications - in real app, this would likely come from a store or props
 const notifications = ref<Notification[]>([

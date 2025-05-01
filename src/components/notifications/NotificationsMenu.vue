@@ -29,12 +29,13 @@
           class="px-4 py-2 flex items-center justify-between border-b border-gray-100"
         >
           <h3 class="font-semibold text-gray-900">Notifications</h3>
-          <button
+          <Button
+            variant="flat"
+            size="xs"
+            text="Mark all as read"
+            class="text-primary-600 hover:text-primary-500"
             @click="$emit('markAllAsRead')"
-            class="text-sm text-primary-600 hover:text-primary-500 transition-colors duration-200 cursor-pointer"
-          >
-            Mark all as read
-          </button>
+          />
         </div>
 
         <div class="max-h-96 overflow-y-auto">
@@ -43,12 +44,12 @@
             :key="notification.id"
             v-slot="{ active }"
           >
-            <button
-              type="button"
+            <Button
+              variant="flat"
               @click="handleNotificationClick(notification)"
               :class="[
                 active ? 'bg-gray-50' : '',
-                'w-full flex items-center gap-3 px-4 py-3 text-sm text-left cursor-pointer transition-colors duration-200 border-b border-gray-100 last:border-0',
+                'w-full flex items-center gap-3 px-4 py-3 text-sm text-left border-b border-gray-100 last:border-0',
               ]"
             >
               <span
@@ -68,7 +69,7 @@
               <span class="text-gray-500 text-xs ml-auto shrink-0">
                 {{ notification.date }}
               </span>
-            </button>
+            </Button>
           </MenuItem>
         </div>
 
@@ -80,12 +81,12 @@
         </div>
 
         <div class="px-4 py-2 border-t border-gray-100">
-          <button
+          <Button
+            variant="flat"
+            text="View all notifications"
+            class="w-full text-center text-sm text-gray-600 hover:text-gray-900"
             @click="$emit('viewAll')"
-            class="text-sm text-gray-600 hover:text-gray-900 w-full text-center transition-colors duration-200 cursor-pointer"
-          >
-            View all notifications
-          </button>
+          />
         </div>
       </MenuItems>
     </transition>
@@ -96,6 +97,7 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { BellIcon } from "@heroicons/vue/24/outline";
 import { computed } from "vue";
+import Button from "../../components/ui/Button.vue";
 
 export interface Notification {
   id: string | number;

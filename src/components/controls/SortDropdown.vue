@@ -7,9 +7,8 @@
           :icon="ArrowsUpDownIcon"
           class="whitespace-nowrap"
           :disabled="disabled"
-        >
-          {{ buttonText }}
-        </Button>
+          :text="buttonText"
+        />
       </MenuButton>
     </div>
 

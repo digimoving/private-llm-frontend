@@ -29,14 +29,13 @@
           >
             <div class="flex items-center justify-between px-4">
               <h2 class="text-lg font-medium text-gray-900">Filters</h2>
-              <button
-                type="button"
-                class="-mr-2 flex h-10 w-10 items-center justify-center rounded-md focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+              <Button
+                variant="icon"
+                :icon="XMarkIcon"
                 @click="close"
-              >
-                <span class="sr-only">Close menu</span>
-                <XMarkIcon class="h-6 w-6 text-gray-700" aria-hidden="true" />
-              </button>
+                aria-label="Close menu"
+                class="text-gray-700"
+              />
             </div>
 
             <!-- Filter Controls -->
@@ -74,7 +73,7 @@
 
               <div>
                 <h3 class="text-sm font-medium text-gray-900 mb-2">Filter</h3>
-                <FilterProjectsDropdown :disabled="isDisabled" class="w-full" />
+                <FilterDropdown :disabled="isDisabled" class="w-full" />
               </div>
             </div>
 
@@ -85,9 +84,8 @@
                 class="w-full"
                 @click="close"
                 :disabled="isDisabled"
-              >
-                Apply filters
-              </Button>
+                text="Apply filters"
+              />
             </div>
           </DialogPanel>
         </TransitionChild>
@@ -96,15 +94,14 @@
   </TransitionRoot>
 
   <!-- Mobile FAB -->
-  <button
-    type="button"
-    class="fixed right-4 bottom-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-white shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 lg:hidden"
+  <Button
+    variant="primary"
+    :icon="FunnelIcon"
+    class="fixed right-4 bottom-4 z-40 h-14 w-14 !p-0 !rounded-full shadow-lg lg:hidden"
     @click="open = true"
     :disabled="isDisabled"
-  >
-    <FunnelIcon class="h-6 w-6" aria-hidden="true" />
-    <span class="sr-only">Open filters</span>
-  </button>
+    aria-label="Open filters"
+  />
 </template>
 
 <script setup lang="ts">
@@ -118,10 +115,10 @@ import {
 import { XMarkIcon } from "@heroicons/vue/24/outline";
 import { FunnelIcon } from "@heroicons/vue/24/solid";
 import Button from "../ui/Button.vue";
-import ProjectsListToggle from "./ProjectsListToggle.vue";
-import SortProjectsDropdown from "./SortProjectsDropdown.vue";
+import ProjectsListToggle from "./ListToggle.vue";
+import SortProjectsDropdown from "./SortDropdown.vue";
 import ToggleArchivedCheckbox from "./ToggleArchivedCheckbox.vue";
-import FilterProjectsDropdown from "./FilterProjectsDropdown.vue";
+import FilterDropdown from "./FilterDropdown.vue";
 import { useProjectsStore } from "../../stores/projects";
 
 type SortOption =

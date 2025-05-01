@@ -8,14 +8,14 @@
     >
       <template v-for="item in items" :key="item.action">
         <MenuItem v-if="!item.showIf || item.showIf()" v-slot="{ active }">
-          <button
-            class="w-full text-left px-4 py-2 text-sm cursor-pointer flex items-center gap-2"
+          <Button
+            variant="flat"
+            :icon="item.icon"
+            :text="item.label"
+            class="w-full text-left"
             :class="[active ? item.activeClass : item.class]"
             @click="handleMenuClick(item.action)"
-          >
-            <component :is="item.icon" class="w-4 h-4" />
-            {{ item.label }}
-          </button>
+          />
         </MenuItem>
       </template>
     </MenuItems>

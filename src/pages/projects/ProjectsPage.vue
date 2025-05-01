@@ -7,16 +7,16 @@
           v-model="showArchived"
           :disabled="projectsStore.loading.projects"
         />
-        <FilterProjectsDropdown
+        <FilterDropdown
           :show-archived="showArchived"
           :disabled="projectsStore.loading.projects"
           @update:filters="handleFiltersUpdate"
         />
-        <SortProjectsDropdown
+        <SortDropdown
           v-model="sortBy"
           :disabled="projectsStore.loading.projects"
         />
-        <ProjectsListToggle
+        <ListToggle
           v-model="showAsList"
           :disabled="projectsStore.loading.projects"
         />
@@ -24,23 +24,31 @@
     </div>
 
     <div class="relative min-h-[600px]">
-      <ProjectsSkeletonLoader
+      <ResourcesSkeletonLoader
         v-if="projectsStore.loading.projects"
         :show-as-list="showAsList"
         @add-project="handleAddProject"
       />
-      <ProjectsContainer
+      <ResourcesContainer
         v-else
         :show-as-list="showAsList"
         :show-archived="showArchived"
         :selected-filters="selectedFilters"
         :sort-by="sortBy"
-        @add-project="handleAddProject"
-        @menu-click="handleMenuClick"
+        resourceType="project"
+        @add-resource="handleAddProject"
+        @menu-click="
+          ($event) =>
+            handleMenuClick({
+              action: $event.action,
+              resource: $event.resource,
+              resourceType: 'project',
+            })
+        "
       />
     </div>
 
-    <ProjectDetailsModal
+    <ResourceDetailsModal
       v-if="showAddProjectModal || showEditModal"
       :model-value="showAddProjectModal || showEditModal"
       @update:model-value="
@@ -49,46 +57,49 @@
           showEditModal = false;
         }
       "
-      :project-id="
+      :resource-id="
         showEditModal && selectedProjectId ? selectedProjectId : undefined
       "
+      resource-type="Project"
     />
-    <ArchiveProjectModal
+    <ArchiveResourceModal
       v-if="showArchiveModal && selectedProjectId"
       v-model="showArchiveModal"
-      :project-id="selectedProjectId"
+      :resource-id="selectedProjectId"
+      resource-type="Project"
     />
-    <DeleteProjectModal
+    <DeleteResourceModal
       v-if="showDeleteModal && selectedProjectId"
       v-model="showDeleteModal"
-      :project-id="selectedProjectId"
+      :resource-id="selectedProjectId"
+      resource-type="Project"
     />
 
-    <!-- Mobile Filters Dialog -->
-    <MobileFiltersDialog
+    <!-- TODO: Mobile Filters Dialog -->
+    <!-- <MobileFiltersDialog
       v-model:viewMode="showAsList"
       v-model:sortBy="sortBy"
       v-model:showArchived="showArchived"
       :disabled="projectsStore.loading.projects"
       @update:filters="handleFiltersUpdate"
-    />
+    /> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import FilterProjectsDropdown from "../../components/controls/FilterProjectsDropdown.vue";
-import SortProjectsDropdown from "../../components/controls/SortProjectsDropdown.vue";
+import FilterDropdown from "../../components/controls/FilterDropdown.vue";
+import SortDropdown from "../../components/controls/SortDropdown.vue";
 import ToggleArchivedCheckbox from "../../components/controls/ToggleArchivedCheckbox.vue";
-import ProjectsListToggle from "../../components/controls/ProjectsListToggle.vue";
-import ProjectsContainer from "../../components/projects/ProjectsContainer.vue";
+import ListToggle from "../../components/controls/ListToggle.vue";
+import ResourcesContainer from "../../components/resources/ResourcesContainer.vue";
 import MobileFiltersDialog from "../../components/controls/MobileFiltersDialog.vue";
-import ProjectsSkeletonLoader from "../../components/projects/ProjectsSkeletonLoader.vue";
-import ProjectDetailsModal from "../../components/modals/ProjectDetailsModal.vue";
-import ArchiveProjectModal from "../../components/modals/ArchiveProjectModal.vue";
-import DeleteProjectModal from "../../components/modals/DeleteProjectModal.vue";
+import ResourcesSkeletonLoader from "../../components/resources/ResourcesSkeletonLoader.vue";
+import ResourceDetailsModal from "../../components/modals/ResourceDetailsModal.vue";
+import ArchiveResourceModal from "../../components/modals/ArchiveResourceModal.vue";
+import DeleteResourceModal from "../../components/modals/DeleteResourceModal.vue";
 import { useProjectsStore } from "../../stores/projects";
-import type { Project } from "../../api/data/projects";
+import type { Project, LLMResource } from "../../types/types";
 
 const projectsStore = useProjectsStore();
 
@@ -135,9 +146,13 @@ const handleAddProject = () => {
 
 const handleMenuClick = (data: {
   action: "edit" | "archive" | "delete";
-  project: Project;
+  resource: Project | LLMResource;
+  resourceType: "project" | "llm";
 }) => {
-  selectedProjectId.value = data.project.id;
+  if (data.resourceType !== "project") return;
+  const projectResource = data.resource as Project;
+
+  selectedProjectId.value = projectResource.id;
   if (data.action === "edit") {
     showEditModal.value = true;
   } else if (data.action === "archive") {
