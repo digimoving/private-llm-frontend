@@ -5,14 +5,15 @@ import type {
   LLMResourceInput,
   LLMListParams,
 } from "../types/types";
-import type { FileListResponse, FileUploadResponse } from "../types/files";
-import type { Report, ReportListResponse } from "../types/reports";
+import type { FileListResponse, FileUploadResponse } from "../types/types";
+import type { Report, ReportListResponse } from "../types/types";
 import { projects } from "./data/projects";
 import { notifications } from "./data/notifications";
 import { llms } from "./data/llms";
 import { mockFiles } from "./data/files";
 import { mockReports } from "./data/reports";
 import { useFileSize } from "../composables/useFileSize";
+import { mockLogs } from "./data/logs";
 
 // Simulated delay to mimic API calls
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -387,5 +388,14 @@ export const reportsApi = {
     return new Blob([`Mock content for ${report.name}`], {
       type: "text/plain",
     });
+  },
+};
+
+export const logsApi = {
+  async list() {
+    // Simulate network delay
+    await delay(300);
+    // Return a shallow copy to simulate fresh data
+    return [...mockLogs];
   },
 };
