@@ -4,8 +4,8 @@
       :model-value="modelValue"
       @update:model-value="$emit('update:modelValue', $event)"
       :class="[
-        modelValue ? 'bg-indigo-600' : 'bg-gray-200',
-        'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:outline-hidden',
+        modelValue ? activeColorClass : 'bg-gray-200',
+        'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none',
       ]"
     >
       <span
@@ -18,19 +18,44 @@
     </Switch>
     <SwitchLabel as="span" class="ml-3 text-sm">
       <span class="font-medium text-gray-900">{{ label }}</span>
-      <span v-if="description" class="text-gray-500"> {{ description }}</span>
+      <span v-if="description" class="text-gray-500 ml-2">
+        {{ description }}</span
+      >
     </SwitchLabel>
   </SwitchGroup>
 </template>
 
 <script setup lang="ts">
 import { Switch, SwitchGroup, SwitchLabel } from "@headlessui/vue";
+import { computed } from "vue";
 
-defineProps<{
-  modelValue: boolean;
-  label: string;
-  description?: string;
-}>();
+type ColorVariant = "secondary" | "success" | "warning" | "danger";
+
+const props = withDefaults(
+  defineProps<{
+    modelValue: boolean;
+    label: string;
+    description?: string;
+    color?: ColorVariant;
+  }>(),
+  {
+    color: "secondary",
+  }
+);
+
+const activeColorClass = computed(() => {
+  switch (props.color) {
+    case "success":
+      return "bg-success-600";
+    case "warning":
+      return "bg-warning-600";
+    case "danger":
+      return "bg-error-600";
+    case "secondary":
+    default:
+      return "bg-secondary-600";
+  }
+});
 
 defineEmits<{
   (e: "update:modelValue", value: boolean): void;

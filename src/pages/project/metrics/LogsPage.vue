@@ -8,18 +8,24 @@
     </div>
     <div class="flex items-center justify-between mb-2">
       <div />
-      <Toggle
-        :model-value="logsStore.liveMode"
-        @update:model-value="handleToggle"
-        label="Live Logs"
-        :description="logsStore.liveMode ? 'On' : 'Off'"
-      />
+      <div class="flex items-center gap-2">
+        <Toggle
+          :model-value="logsStore.liveMode"
+          @update:model-value="handleToggle"
+          :color="logsStore.liveMode ? 'success' : 'secondary'"
+          :label="logsStore.liveMode ? 'Live Logs On' : 'Live Logs Off'"
+        />
+        <ArrowPathIcon
+          v-if="logsStore.liveMode"
+          class="h-5 w-5 text-gray-500 animate-[spin_2s_linear_infinite]"
+        />
+      </div>
     </div>
     <Table
       :columns="columns"
       :items="logsStore.logs"
       :loading="logsStore.isLoading"
-      class="px-0"
+      class="w-full px-0"
     >
       <template #model="{ item }">
         <Chip
@@ -29,26 +35,20 @@
         />
       </template>
       <template #status="{ item }">
-        <Chip
-          :text="item.status"
-          size="xs"
-          :class="{
-            'bg-success-100 text-success-700': item.status === 'success',
-            'bg-error-100 text-error-700': item.status === 'error',
-            'bg-warning-100 text-warning-700': item.status === 'pending',
-          }"
-        />
+        <StatusChip :status="item.status" size="xs" />
       </template>
     </Table>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useLogsStore } from "../../../stores/logs";
 import Table from "../../../components/ui/Table.vue";
 import Toggle from "../../../components/ui/Toggle.vue";
 import Chip from "../../../components/ui/Chip.vue";
+import StatusChip from "../../../components/global/StatusChip.vue";
+import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 
 const logsStore = useLogsStore();
 
@@ -67,7 +67,7 @@ onMounted(() => {
   logsStore.loadLogs();
 });
 
-function handleToggle(val: boolean) {
+const handleToggle = (val: boolean) => {
   logsStore.setLiveMode(val);
-}
+};
 </script>
