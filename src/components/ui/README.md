@@ -275,3 +275,52 @@ A form component that handles validation and submission.
   <!-- Form fields -->
 </Form>
 ```
+
+## Toggle
+
+A switch component that can be toggled on and off with customisable colours.
+
+### Props
+
+| Prop        | Type                                              | Required | Default     | Description                                                   |
+| ----------- | ------------------------------------------------- | -------- | ----------- | ------------------------------------------------------------- |
+| modelValue  | boolean                                           | Yes      | -           | The current state of the toggle                               |
+| label       | string                                            | Yes      | -           | The label text to display next to the toggle                  |
+| description | string                                            | No       | -           | Optional description text to display below the label          |
+| color       | 'secondary' \| 'success' \| 'warning' \| 'danger' | No       | 'secondary' | The color variant to use when the toggle is in the "on" state |
+
+### Events
+
+| Event             | Description                           |
+| ----------------- | ------------------------------------- |
+| update:modelValue | Emitted when the toggle state changes |
+
+### Usage
+
+```vue
+<!-- Basic usage -->
+<Toggle v-model="isEnabled" label="Enable feature" />
+
+<!-- With description -->
+<Toggle
+  v-model="isEnabled"
+  label="Enable feature"
+  description="This will enable the feature for all users"
+/>
+
+<!-- With custom colour -->
+<Toggle v-model="isEnabled" label="Enable feature" color="success" />
+
+<!-- Colour variants -->
+<Toggle v-model="isEnabled" label="Success" color="success" />
+<Toggle v-model="isEnabled" label="Warning" color="warning" />
+<Toggle v-model="isEnabled" label="Danger" color="danger" />
+<Toggle v-model="isEnabled" label="Secondary" color="secondary" />
+```
+
+### Notes
+
+- The toggle uses Tailwind's colour classes for the active state
+- The inactive state is always gray (`bg-gray-200`)
+- The focus ring colour is always indigo to maintain consistency
+- The component is built on top of Headless UI's Switch component
