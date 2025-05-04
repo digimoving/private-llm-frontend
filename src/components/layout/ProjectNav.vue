@@ -58,7 +58,6 @@
       <!-- Action Buttons -->
       <div class="flex items-center gap-2">
         <Button
-          v-if="projectStore.currentProject?.archived"
           variant="secondary"
           @click="toggleArchived"
           :loading="isTogglingArchived"
@@ -68,12 +67,6 @@
               : 'Archive Project'
           "
         />
-        <!-- <Button
-          v-else
-          variant="secondary"
-          @click="handleArchiveClick"
-          text="Archive Project"
-        /> -->
         <Button
           v-if="projectStore.currentProject?.archived"
           variant="danger"
