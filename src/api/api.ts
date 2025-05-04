@@ -5,15 +5,113 @@ import type {
   LLMResourceInput,
   LLMListParams,
 } from "../types/types";
+import type { FileListResponse, FileUploadResponse } from "../types/files";
+import type { Report, ReportListResponse } from "../types/reports";
 import { projects } from "./data/projects";
 import { notifications } from "./data/notifications";
 import { llms } from "./data/llms";
+import { mockFiles } from "./data/files";
+import { mockReports } from "./data/reports";
+import { useFileSize } from "../composables/useFileSize";
 
 // Simulated delay to mimic API calls
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Use the imported llms data
 let llmsData = [...llms];
+
+// Initialize the file size formatter
+const { format: formatFileSize } = useFileSize();
+
+export const projectsApi = {
+  // Get all projects with optional filtering
+  async list(
+    params: { archived?: boolean } = {}
+  ): Promise<{ data: Project[] }> {
+    await delay(500);
+    let filteredProjects = [...projects];
+
+    if (params.archived !== undefined) {
+      filteredProjects = filteredProjects.filter(
+        (p) => p.archived === params.archived
+      );
+    }
+
+    return { data: filteredProjects };
+  },
+
+  // Get a single project by ID
+  async get(id: string): Promise<{ data: Project }> {
+    await delay(300);
+    const project = projects.find((p) => p.id === id);
+    if (!project) throw new Error("Project not found");
+    return { data: project };
+  },
+
+  // Create a new project
+  async create(
+    projectData: Omit<Project, "id" | "createdAt" | "updatedAt">
+  ): Promise<{ data: Project }> {
+    await delay(800);
+    const newProject: Project = {
+      id: `project_${String(projects.length + 1).padStart(3, "0")}`,
+      name: projectData.name,
+      description: projectData.description || "",
+      tags: projectData.tags || [],
+      archived: false,
+      createdAt: new Date().toISOString(),
+      lastUpdated: new Date().toISOString(),
+    };
+    projects.push(newProject);
+    return { data: newProject };
+  },
+
+  // Update an existing project
+  async update(
+    id: string,
+    projectData: Partial<Project>
+  ): Promise<{ data: Project; archivedLLMs?: LLMResource[] }> {
+    await delay(600);
+    const index = projects.findIndex((p) => p.id === id);
+    if (index === -1) throw new Error("Project not found");
+
+    const updatedProject = {
+      ...projects[index],
+      ...projectData,
+      lastUpdated: new Date().toISOString(),
+    };
+    projects[index] = updatedProject;
+
+    // If project is being archived, archive all associated LLMs
+    let archivedLLMs: LLMResource[] | undefined;
+    if (projectData.archived === true) {
+      archivedLLMs = [];
+      llmsData = llmsData.map((llm) => {
+        if (llm.projectId === id && !llm.archived) {
+          const updatedLLM = {
+            ...llm,
+            archived: true,
+            updatedAt: new Date().toISOString(),
+          };
+          archivedLLMs!.push(updatedLLM);
+          return updatedLLM;
+        }
+        return llm;
+      });
+    }
+
+    return { data: updatedProject, archivedLLMs };
+  },
+
+  // Delete a project
+  async delete(id: string): Promise<void> {
+    await delay(500);
+    const index = projects.findIndex((p) => p.id === id);
+    if (index !== -1) {
+      projects.splice(index, 1);
+    }
+  },
+};
 
 export const llmsApi = {
   // List LLMs in a project
@@ -183,96 +281,6 @@ export const llmsApi = {
   },
 };
 
-export const projectsApi = {
-  // Get all projects with optional filtering
-  async list(
-    params: { archived?: boolean } = {}
-  ): Promise<{ data: Project[] }> {
-    await delay(500);
-    let filteredProjects = [...projects];
-
-    if (params.archived !== undefined) {
-      filteredProjects = filteredProjects.filter(
-        (p) => p.archived === params.archived
-      );
-    }
-
-    return { data: filteredProjects };
-  },
-
-  // Get a single project by ID
-  async get(id: string): Promise<{ data: Project }> {
-    await delay(300);
-    const project = projects.find((p) => p.id === id);
-    if (!project) throw new Error("Project not found");
-    return { data: project };
-  },
-
-  // Create a new project
-  async create(
-    projectData: Omit<Project, "id" | "createdAt" | "updatedAt">
-  ): Promise<{ data: Project }> {
-    await delay(800);
-    const newProject: Project = {
-      id: `project_${String(projects.length + 1).padStart(3, "0")}`,
-      name: projectData.name,
-      description: projectData.description || "",
-      tags: projectData.tags || [],
-      archived: false,
-      createdAt: new Date().toISOString(),
-      lastUpdated: new Date().toISOString(),
-    };
-    projects.push(newProject);
-    return { data: newProject };
-  },
-
-  // Update an existing project
-  async update(
-    id: string,
-    projectData: Partial<Project>
-  ): Promise<{ data: Project; archivedLLMs?: LLMResource[] }> {
-    await delay(600);
-    const index = projects.findIndex((p) => p.id === id);
-    if (index === -1) throw new Error("Project not found");
-
-    const updatedProject = {
-      ...projects[index],
-      ...projectData,
-      lastUpdated: new Date().toISOString(),
-    };
-    projects[index] = updatedProject;
-
-    // If project is being archived, archive all associated LLMs
-    let archivedLLMs: LLMResource[] | undefined;
-    if (projectData.archived === true) {
-      archivedLLMs = [];
-      llmsData = llmsData.map((llm) => {
-        if (llm.projectId === id && !llm.archived) {
-          const updatedLLM = {
-            ...llm,
-            archived: true,
-            updatedAt: new Date().toISOString(),
-          };
-          archivedLLMs!.push(updatedLLM);
-          return updatedLLM;
-        }
-        return llm;
-      });
-    }
-
-    return { data: updatedProject, archivedLLMs };
-  },
-
-  // Delete a project
-  async delete(id: string): Promise<void> {
-    await delay(500);
-    const index = projects.findIndex((p) => p.id === id);
-    if (index !== -1) {
-      projects.splice(index, 1);
-    }
-  },
-};
-
 export const notificationsApi = {
   // Get all notifications
   async list(): Promise<Notification[]> {
@@ -309,6 +317,75 @@ export const notificationsApi = {
         ...notification,
         read: true,
       };
+    });
+  },
+};
+
+export const filesApi = {
+  async list(): Promise<FileListResponse> {
+    await delay(500); // Simulate network delay
+    return {
+      files: mockFiles,
+      total: mockFiles.length,
+    };
+  },
+
+  async create(files: FileList): Promise<FileUploadResponse[]> {
+    await delay(1000); // Simulate upload delay
+    return Array.from(files).map((file, index) => ({
+      id: `new-${index + 1}`,
+      name: file.name,
+      type: file.type,
+      size: formatFileSize(file.size),
+      url: `/files/${file.name}`,
+    }));
+  },
+
+  async delete(fileId: string): Promise<void> {
+    await delay(300); // Simulate delete delay
+    const index = mockFiles.findIndex((f) => f.id === fileId);
+    if (index !== -1) {
+      mockFiles.splice(index, 1);
+    }
+  },
+
+  async download(fileId: string): Promise<Blob> {
+    await delay(300); // Simulate download delay
+    const file = mockFiles.find((f) => f.id === fileId);
+    if (!file) {
+      throw new Error("File not found");
+    }
+    // Return a mock blob
+    return new Blob([`Mock content for ${file.name}`], { type: "text/plain" });
+  },
+};
+
+export const reportsApi = {
+  async list(): Promise<ReportListResponse> {
+    await delay(500); // Simulate network delay
+    return {
+      reports: mockReports,
+      total: mockReports.length,
+    };
+  },
+
+  async delete(reportId: string): Promise<void> {
+    await delay(300); // Simulate delete delay
+    const index = mockReports.findIndex((r) => r.id === reportId);
+    if (index !== -1) {
+      mockReports.splice(index, 1);
+    }
+  },
+
+  async download(reportId: string): Promise<Blob> {
+    await delay(300); // Simulate download delay
+    const report = mockReports.find((r) => r.id === reportId);
+    if (!report) {
+      throw new Error("Report not found");
+    }
+    // Return a mock blob
+    return new Blob([`Mock content for ${report.name}`], {
+      type: "text/plain",
     });
   },
 };
