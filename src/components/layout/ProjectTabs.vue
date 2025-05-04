@@ -1,14 +1,12 @@
 <template>
-  <nav
-    class="flex space-x-1 border-b border-gray-200 mx-5 px-4"
-    aria-label="Tabs"
-  >
+  <!-- TODO: Create mobile version of tabs -->
+  <nav class="flex space-x-1 border-b border-gray-200" aria-label="Tabs">
     <RouterLink
       v-for="tab in tabs"
       :key="tab.name"
       :to="tab.to"
       :class="[
-        'px-3 py-2 text-sm font-medium',
+        'px-3 py-2 text-md font-medium',
         isActiveTab(tab.to)
           ? projectStore.currentProject?.archived
             ? 'border-b-2 border-gray-300 text-gray-400 cursor-not-allowed'
@@ -38,7 +36,17 @@ const tabs = [
   { name: "Settings", to: { name: "project-settings" } },
 ];
 
+// Map of parent routes to their child routes
+const routeGroups = {
+  "project-metrics": ["metrics-overview", "metrics-reporting", "metrics-logs"],
+};
+
 const isActiveTab = (tabTo: any) => {
-  return route.name === tabTo.name;
+  // Check if current route matches the tab directly
+  if (route.name === tabTo.name) return true;
+
+  // Check if current route is a child of the tab's route
+  const childRoutes = routeGroups[tabTo.name as keyof typeof routeGroups];
+  return childRoutes?.includes(route.name as string) || false;
 };
 </script>
