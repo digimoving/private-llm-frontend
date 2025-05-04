@@ -1,5 +1,10 @@
 <template>
-  <div class="mt-8 flow-root">
+  <TableSkeletonLoader
+    v-if="loading"
+    :column-count="columns.length"
+    :row-count="5"
+  />
+  <div v-else class="mt-8 flow-root">
     <div class="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle">
         <div
@@ -112,6 +117,8 @@
 </template>
 
 <script setup lang="ts">
+import TableSkeletonLoader from "../skeletons/TableSkeletonLoader.vue";
+
 interface Column {
   key: string;
   label: string;
@@ -123,9 +130,12 @@ interface Column {
 interface Props {
   columns: Column[];
   items: any[];
+  loading?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  loading: false,
+});
 
 // Get the key of the first column for styling purposes
 const firstColumn = props.columns[0]?.key;

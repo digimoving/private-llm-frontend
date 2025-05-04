@@ -89,7 +89,7 @@ import ToggleArchivedCheckbox from "../../components/controls/ToggleArchivedChec
 import ListToggle from "../../components/controls/ListToggle.vue";
 import ResourcesContainer from "../../components/resources/ResourcesContainer.vue";
 import MobileFiltersDialog from "../../components/controls/MobileFiltersDialog.vue";
-import ResourcesSkeletonLoader from "../../components/resources/ResourcesSkeletonLoader.vue";
+import ResourcesSkeletonLoader from "../../components/skeletons/ResourcesSkeletonLoader.vue";
 import ResourceDetailsModal from "../../components/modals/ResourceDetailsModal.vue";
 import ArchiveResourceModal from "../../components/modals/ArchiveResourceModal.vue";
 import DeleteResourceModal from "../../components/modals/DeleteResourceModal.vue";
