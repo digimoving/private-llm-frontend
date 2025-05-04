@@ -1,0 +1,58 @@
+import type { Report } from "../../types/reports";
+
+export const mockReports: Report[] = [
+  {
+    id: "1",
+    name: "Weekly Performance Report",
+    date: "2025-04-14",
+    models: ["Support Agent"],
+    metrics: "Token usage, cost analysis",
+    format: "PDF",
+    timeRange: "Last 7 days",
+  },
+  {
+    id: "2",
+    name: "Monthly Cost Analysis",
+    date: "2025-04-01",
+    models: ["Support Agent"],
+    metrics: "Request count",
+    format: "Excel",
+    timeRange: "Last 30 days",
+  },
+  {
+    id: "3",
+    name: "March LLM Report",
+    date: "2025-04-01",
+    models: ["Support Agent", "Content Generator"],
+    metrics: "Request count",
+    format: "Excel",
+    timeRange: "Last 30 days",
+  },
+  {
+    id: "4",
+    name: "Weekly Performance Report",
+    date: "2025-03-07",
+    models: ["Support Agent"],
+    metrics: "Error rate, token usage",
+    format: "PDF",
+    timeRange: "Last 7 days",
+  },
+  {
+    id: "5",
+    name: "Monthly Cost Analysis",
+    date: "2025-03-01",
+    models: ["Content Generator"],
+    metrics: "Request count, response time",
+    format: "Excel",
+    timeRange: "Last 30 days",
+  },
+  {
+    id: "6",
+    name: "February LLM Report",
+    date: "2025-03-01",
+    models: ["Support Agent", "Content Generator"],
+    metrics: "Token usage",
+    format: "Excel",
+    timeRange: "Last 30 days",
+  },
+];
