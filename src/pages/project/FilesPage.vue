@@ -1,25 +1,35 @@
 <!-- FilesPage.vue -->
 <template>
   <div class="space-y-8">
-    <div class="sm:flex sm:items-center">
-      <div class="sm:flex-auto">
-        <h1 class="text-xl font-semibold text-gray-900">Project Files</h1>
-        <p class="mt-2 text-sm text-gray-700">
-          A list of all files in your project including their name, type, size,
-          and upload date.
-        </p>
-      </div>
-      <div class="mt-4 sm:mt-0 sm:flex-none">
-        <Button
-          :icon="ArrowUpTrayIcon"
-          text="Upload Files"
-          variant="secondary"
-          @click="showUploadModal = true"
-        />
+    <div class="sm:flex sm:items-center sm:justify-end">
+      <Button
+        :icon="ArrowUpTrayIcon"
+        text="Upload Files"
+        variant="secondary"
+        @click="showUploadModal = true"
+      />
+    </div>
+
+    <div v-if="filesStore.error" class="rounded-md bg-error-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <XCircleIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-error-800">Error</h3>
+          <div class="mt-2 text-sm text-error-700">
+            <p>{{ filesStore.error }}</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <Table :columns="columns" :items="files">
+    <Table
+      :columns="columns"
+      :items="filesStore.files"
+      :loading="filesStore.isLoading"
+      class="px-8"
+    >
       <template #name="{ item }">
         <div class="flex items-center gap-3">
           <FileIcon :type="item.type" />
@@ -36,7 +46,9 @@
       </template>
 
       <template #uploadDate="{ item }">
-        <span class="text-gray-500">{{ item.uploadDate }}</span>
+        <span class="text-gray-500">{{
+          useDateFormat(item.uploadDate, "DD/MM/YYYY").value
+        }}</span>
       </template>
 
       <template #tags="{ item }">
@@ -55,13 +67,15 @@
         <div class="flex justify-end gap-2">
           <Button
             :icon="ArrowDownTrayIcon"
-            variant="secondary"
-            @click="downloadFile(item)"
+            variant="icon"
+            :loading="filesStore.downloadingFileIds.has(item.id)"
+            @click="filesStore.downloadFile(item.id)"
           />
           <Button
             :icon="TrashIcon"
-            variant="secondary"
-            @click="deleteFile(item)"
+            variant="icon"
+            :loading="filesStore.deletingFileIds.has(item.id)"
+            @click="filesStore.deleteFile(item.id)"
           />
         </div>
       </template>
@@ -69,6 +83,7 @@
 
     <FileUpload
       :is-open="showUploadModal"
+      :loading="filesStore.isLoading"
       @close="showUploadModal = false"
       @upload="handleFiles"
     />
@@ -76,7 +91,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { useFilesStore } from "../../stores/files";
+import { useDateFormat } from "@vueuse/core";
 import Chip from "../../components/ui/Chip.vue";
 import FileIcon from "../../components/files/FileIcon.vue";
 import Table from "../../components/ui/Table.vue";
@@ -86,126 +103,11 @@ import {
   ArrowUpTrayIcon,
   ArrowDownTrayIcon,
   TrashIcon,
+  XCircleIcon,
 } from "@heroicons/vue/24/outline";
 
-interface File {
-  name: string;
-  type: string;
-  size: string;
-  uploadDate: string;
-  tags: string[];
-}
-
 const showUploadModal = ref(false);
-
-// Sample data - replace with actual data from your store
-const files = ref<File[]>([
-  {
-    name: "training-data.json",
-    type: "JSON",
-    size: "1.95 MB",
-    uploadDate: "2025-04-01",
-    tags: ["training"],
-  },
-  {
-    name: "product-catalogue.csv",
-    type: "CSV",
-    size: "500 KB",
-    uploadDate: "2025-03-31",
-    tags: ["product"],
-  },
-  {
-    name: "support-examples.txt",
-    type: "TXT",
-    size: "82.03 KB",
-    uploadDate: "2025-03-31",
-    tags: ["support"],
-  },
-  {
-    name: "brand-guidelines.pdf",
-    type: "PDF",
-    size: "3 MB",
-    uploadDate: "2025-03-28",
-    tags: ["brand", "guidelines"],
-  },
-  {
-    name: "company-logo.png",
-    type: "PNG",
-    size: "250 KB",
-    uploadDate: "2025-03-28",
-    tags: ["brand", "logo", "image"],
-  },
-  {
-    name: "training-data.json",
-    type: "JSON",
-    size: "1.95 MB",
-    uploadDate: "2025-04-01",
-    tags: ["training"],
-  },
-  {
-    name: "product-catalogue.csv",
-    type: "CSV",
-    size: "500 KB",
-    uploadDate: "2025-03-31",
-    tags: ["product"],
-  },
-  {
-    name: "support-examples.txt",
-    type: "TXT",
-    size: "82.03 KB",
-    uploadDate: "2025-03-31",
-    tags: ["support"],
-  },
-  {
-    name: "brand-guidelines.pdf",
-    type: "PDF",
-    size: "3 MB",
-    uploadDate: "2025-03-28",
-    tags: ["brand", "guidelines"],
-  },
-  {
-    name: "company-logo.png",
-    type: "PNG",
-    size: "250 KB",
-    uploadDate: "2025-03-28",
-    tags: ["brand", "logo", "image"],
-  },
-  {
-    name: "training-data.json",
-    type: "JSON",
-    size: "1.95 MB",
-    uploadDate: "2025-04-01",
-    tags: ["training"],
-  },
-  {
-    name: "product-catalogue.csv",
-    type: "CSV",
-    size: "500 KB",
-    uploadDate: "2025-03-31",
-    tags: ["product"],
-  },
-  {
-    name: "support-examples.txt",
-    type: "TXT",
-    size: "82.03 KB",
-    uploadDate: "2025-03-31",
-    tags: ["support"],
-  },
-  {
-    name: "brand-guidelines.pdf",
-    type: "PDF",
-    size: "3 MB",
-    uploadDate: "2025-03-28",
-    tags: ["brand", "guidelines"],
-  },
-  {
-    name: "company-logo.png",
-    type: "PNG",
-    size: "250 KB",
-    uploadDate: "2025-03-28",
-    tags: ["brand", "logo", "image"],
-  },
-]);
+const filesStore = useFilesStore();
 
 const columns = [
   { key: "name", label: "Name" },
@@ -216,19 +118,12 @@ const columns = [
   { key: "actions", label: "Actions" },
 ];
 
-const handleFiles = (fileList: FileList) => {
-  // Handle file upload logic here
-  console.log("Files to upload:", fileList);
+const handleFiles = async (fileList: FileList) => {
+  await filesStore.uploadFiles(fileList);
   showUploadModal.value = false;
 };
 
-const downloadFile = (file: File) => {
-  // Handle file download logic here
-  console.log("Downloading file:", file);
-};
-
-const deleteFile = (file: File) => {
-  // Handle file deletion logic here
-  console.log("Deleting file:", file);
-};
+onMounted(() => {
+  filesStore.loadFiles();
+});
 </script>
