@@ -14,7 +14,7 @@
     :aria-busy="loading"
     :aria-disabled="disabled || loading"
   >
-    <span v-if="loading" class="mr-2">
+    <span v-if="loading" :class="{ 'mr-2': !icon }">
       <svg
         class="animate-spin h-4 w-4"
         xmlns="http://www.w3.org/2000/svg"
