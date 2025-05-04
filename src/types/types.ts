@@ -62,3 +62,55 @@ export interface LLM {
   lastUpdated: string;
   projectId: string;
 }
+
+// File Types
+export interface File {
+  id: string;
+  name: string;
+  type: string;
+  size: string;
+  uploadDate: string;
+  tags: string[];
+  url?: string;
+}
+
+export interface FileUploadResponse {
+  id: string;
+  name: string;
+  type: string;
+  size: string;
+  url: string;
+}
+
+export interface FileListResponse {
+  files: File[];
+  total: number;
+}
+
+// Report Types
+export interface Report {
+  id: string;
+  name: string;
+  date: string;
+  models: string[];
+  metrics: string;
+  format: string;
+  timeRange: string;
+}
+
+export interface ReportListResponse {
+  reports: Report[];
+  total: number;
+}
+
+// Log Types
+export interface LogEntry {
+  time: string;
+  requestId: string;
+  model: string;
+  user: string;
+  prompt: string;
+  tokens: number;
+  latency: string;
+  status: string;
+}
