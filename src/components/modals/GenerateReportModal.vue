@@ -145,8 +145,8 @@ const isValid = computed(
     formData.format
 );
 
-function handleSubmit() {
+const handleSubmit = () => {
   if (!isValid.value) return;
   emit("submit", { ...formData });
-}
+};
 </script>

@@ -120,10 +120,10 @@ const openGenerateReportModal = () => {
   showGenerateModal.value = true;
 };
 
-function handleModalSubmit(payload: any) {
+const handleModalSubmit = (payload: any) => {
   // TODO: Actually create the report
   showGenerateModal.value = false;
-}
+};
 
 onMounted(() => {
   reportsStore.loadReports();
