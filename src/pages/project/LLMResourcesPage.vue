@@ -1,23 +1,17 @@
 <!-- LLMResourcesPage.vue -->
 <template>
   <div class="space-y-8">
-    <!-- Desktop Controls -->
-    <div class="hidden lg:flex items-center justify-end gap-4 mb-4">
-      <div class="sm:flex-auto">
-        <h1 class="text-xl font-semibold text-gray-900">LLM Resources</h1>
-      </div>
-      <div class="flex items-center gap-2">
-        <ToggleArchivedCheckbox v-model="showArchived" :disabled="isDisabled" />
-        <FilterDropdown
-          :show-archived="showArchived"
-          :disabled="isDisabled"
-          :tags="availableTags"
-          :status-options="statusOptions"
-          @update:filters="handleFiltersUpdate"
-        />
-        <SortDropdown v-model="sortBy" :disabled="isDisabled" />
-        <ListToggle v-model="showAsList" :disabled="isDisabled" />
-      </div>
+    <div class="flex items-center justify-end gap-2">
+      <ToggleArchivedCheckbox v-model="showArchived" :disabled="isDisabled" />
+      <FilterDropdown
+        :show-archived="showArchived"
+        :disabled="isDisabled"
+        :tags="availableTags"
+        :status-options="statusOptions"
+        @update:filters="handleFiltersUpdate"
+      />
+      <SortDropdown v-model="sortBy" :disabled="isDisabled" />
+      <ListToggle v-model="showAsList" :disabled="isDisabled" />
     </div>
 
     <div class="relative min-h-[600px]">
@@ -82,8 +76,8 @@ import SortDropdown from "../../components/controls/SortDropdown.vue";
 import ToggleArchivedCheckbox from "../../components/controls/ToggleArchivedCheckbox.vue";
 import ListToggle from "../../components/controls/ListToggle.vue";
 import ResourcesContainer from "../../components/resources/ResourcesContainer.vue";
-import MobileFiltersDialog from "../../components/controls/MobileFiltersDialog.vue";
-import ResourcesSkeletonLoader from "../../components/resources/ResourcesSkeletonLoader.vue";
+// import MobileFiltersDialog from "../../components/controls/MobileFiltersDialog.vue";
+import ResourcesSkeletonLoader from "../../components/skeletons/ResourcesSkeletonLoader.vue";
 import ResourceDetailsModal from "../../components/modals/ResourceDetailsModal.vue";
 import ArchiveResourceModal from "../../components/modals/ArchiveResourceModal.vue";
 import DeleteResourceModal from "../../components/modals/DeleteResourceModal.vue";
