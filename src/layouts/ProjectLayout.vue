@@ -5,10 +5,22 @@
       @archive="showArchiveModal = true"
       @delete="showDeleteModal = true"
     />
-    <ProjectTabs class="my-4" />
-    <!-- Main Content -->
-    <main class="min-h-[calc(100vh-12rem)] mx-auto px-4 sm:px-6 lg:px-8">
-      <router-view />
+    <main class="pt-4 pb-8">
+      <div class="mx-auto px-4 sm:px-6 lg:px-8">
+        <ProjectTabs class="mb-5" />
+        <div class="mb-3">
+          <h1 class="text-xl font-semibold text-gray-900">
+            {{ route.meta.title }}
+          </h1>
+          <p v-if="route.meta.subtitle" class="mt-2 text-sm text-gray-700">
+            {{ route.meta.subtitle }}
+          </p>
+        </div>
+
+        <div class="min-h-[calc(100vh-16rem)]">
+          <router-view />
+        </div>
+      </div>
     </main>
 
     <!-- Modals -->
