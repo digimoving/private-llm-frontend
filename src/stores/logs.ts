@@ -9,12 +9,14 @@ interface LoadingState {
 export const useLogsStore = defineStore("logs", {
   state: () => ({
     logs: [] as LogEntry[],
-    isLoading: false,
+    totalLogs: 0,
     liveMode: false,
     error: null as string | null,
     loading: {
       logs: false,
     } as LoadingState,
+    currentPage: 1,
+    pageSize: 10,
   }),
 
   getters: {
@@ -24,14 +26,18 @@ export const useLogsStore = defineStore("logs", {
         (value: boolean) => value === true
       );
     },
+    totalPages: (state) => Math.ceil(state.totalLogs / state.pageSize),
   },
 
   actions: {
-    async loadLogs() {
+    async loadLogs(page?: number) {
+      const pageToLoad = page ?? this.currentPage;
       try {
         this.loading.logs = true;
         this.error = null;
-        this.logs = await logsApi.list();
+        const { logs, total } = await logsApi.list(pageToLoad, this.pageSize);
+        this.logs = logs;
+        this.totalLogs = total;
       } catch (error) {
         this.error =
           error instanceof Error ? error.message : "An error occurred";
@@ -46,6 +52,11 @@ export const useLogsStore = defineStore("logs", {
       this.liveMode = val;
       // In the future, start/stop websocket here
       if (!val) this.loadLogs(); // reload static logs when switching back
+    },
+
+    setPage(page: number) {
+      this.currentPage = page;
+      this.loadLogs(page);
     },
   },
 });

@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import Chip from "../ui/Chip.vue";
 
-type Status = "active" | "paused" | "archived";
+type Status =
+  | "active"
+  | "paused"
+  | "archived"
+  | "success"
+  | "error"
+  | "pending";
 
 interface Props {
   status: Status;
@@ -24,6 +30,18 @@ const statusConfig = {
   archived: {
     text: "Archived",
     class: "bg-gray-400 text-gray-200",
+  },
+  success: {
+    text: "Success",
+    class: "bg-success-100 text-success-700",
+  },
+  error: {
+    text: "Error",
+    class: "bg-error-100 text-error-700",
+  },
+  pending: {
+    text: "Pending",
+    class: "bg-warning-100 text-warning-700",
   },
 } as const;
 </script>

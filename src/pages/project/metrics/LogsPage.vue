@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6 px-6">
+  <div class="px-6">
     <div>
       <h2 class="text-xl font-semibold text-gray-900">Request Logs</h2>
       <p class="mt-1 text-sm text-gray-500">
@@ -25,6 +25,11 @@
       :columns="columns"
       :items="logsStore.logs"
       :loading="logsStore.isLoading"
+      :current-page="logsStore.currentPage"
+      :total-pages="logsStore.totalPages"
+      :page-size="logsStore.pageSize"
+      :total-items="logsStore.totalLogs"
+      @pageChange="logsStore.setPage"
       class="w-full px-0"
     >
       <template #model="{ item }">

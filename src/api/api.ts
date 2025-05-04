@@ -392,10 +392,15 @@ export const reportsApi = {
 };
 
 export const logsApi = {
-  async list() {
+  async list(page = 1, pageSize = 10) {
     // Simulate network delay
     await delay(300);
-    // Return a shallow copy to simulate fresh data
-    return [...mockLogs];
+    // Paginate the logs
+    const start = (page - 1) * pageSize;
+    const pagedLogs = mockLogs.slice(start, start + pageSize);
+    return {
+      logs: pagedLogs,
+      total: mockLogs.length,
+    };
   },
 };
