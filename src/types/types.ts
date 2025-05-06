@@ -114,3 +114,23 @@ export interface LogEntry {
   latency: string;
   status: string;
 }
+
+// Metrics Types
+export interface MetricsSummary {
+  totalRequests: number;
+  avgRequestsPerDay: number;
+  totalTokens: number;
+  estimatedCost: number;
+}
+
+export interface MetricsTimeSeries {
+  date: string; // e.g. '2024-06-01'
+  requests: number;
+  tokens: number;
+}
+
+export interface MetricsOverview {
+  summary: MetricsSummary;
+  timeSeries: MetricsTimeSeries[];
+  tags: string[];
+}

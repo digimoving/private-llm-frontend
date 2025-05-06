@@ -14,6 +14,7 @@ import { mockFiles } from "./data/files";
 import { mockReports } from "./data/reports";
 import { useFileSize } from "../composables/useFileSize";
 import { mockLogs } from "./data/logs";
+import { mockMetrics } from "./data/metrics";
 
 // Simulated delay to mimic API calls
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -402,5 +403,12 @@ export const logsApi = {
       logs: pagedLogs,
       total: mockLogs.length,
     };
+  },
+};
+
+export const metricsApi = {
+  async getOverview(): Promise<{ data: typeof mockMetrics }> {
+    await delay(300);
+    return { data: mockMetrics };
   },
 };
