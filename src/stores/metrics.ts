@@ -14,16 +14,20 @@ export const useMetricsStore = defineStore("metrics", {
   },
 
   actions: {
-    async fetchOverview() {
-      this.loading = true;
+    async fetchOverview(tag?: string | null, useGlobalLoading = true) {
+      if (useGlobalLoading) {
+        this.loading = true;
+      }
       this.error = null;
       try {
-        const { data } = await metricsApi.getOverview();
+        const { data } = await metricsApi.list(tag);
         this.overview = data;
       } catch (e: any) {
         this.error = e.message || "Failed to fetch metrics overview";
       } finally {
-        this.loading = false;
+        if (useGlobalLoading) {
+          this.loading = false;
+        }
       }
     },
   },

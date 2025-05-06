@@ -407,8 +407,42 @@ export const logsApi = {
 };
 
 export const metricsApi = {
-  async getOverview(): Promise<{ data: typeof mockMetrics }> {
+  async list(tag?: string | null): Promise<{ data: typeof mockMetrics }> {
     await delay(300);
+    // Simulate tag-based filtering on the mock data
+    if (tag) {
+      // For demo: filter by even/odd days for different tags
+      const isEvenTag = tag.length % 2 === 0;
+      const filteredTimeSeries = mockMetrics.timeSeries.filter((entry, idx) =>
+        isEvenTag ? idx % 2 === 0 : idx % 2 !== 0
+      );
+      // Recalculate summary
+      const totalRequests = filteredTimeSeries.reduce(
+        (sum, d) => sum + d.requests,
+        0
+      );
+      const avgRequestsPerDay =
+        filteredTimeSeries.length > 0
+          ? Math.round(totalRequests / filteredTimeSeries.length)
+          : 0;
+      const totalTokens = filteredTimeSeries.reduce(
+        (sum, d) => sum + d.tokens,
+        0
+      );
+      const estimatedCost = Number((totalTokens * 0.0000024).toFixed(2));
+      return {
+        data: {
+          summary: {
+            totalRequests,
+            avgRequestsPerDay,
+            totalTokens,
+            estimatedCost,
+          },
+          timeSeries: filteredTimeSeries,
+          tags: mockMetrics.tags,
+        },
+      };
+    }
     return { data: mockMetrics };
   },
 };
