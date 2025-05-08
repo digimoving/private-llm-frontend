@@ -62,6 +62,10 @@ export const projectsApi = {
       archived: false,
       createdAt: new Date().toISOString(),
       lastUpdated: new Date().toISOString(),
+      apiAccess: projectData.apiAccess ?? false,
+      requestLogging: projectData.requestLogging ?? false,
+      autoScaling: projectData.autoScaling ?? false,
+      cacheResults: projectData.cacheResults ?? false,
     };
     projects.push(newProject);
     return { data: newProject };
@@ -80,6 +84,13 @@ export const projectsApi = {
       ...projects[index],
       ...projectData,
       lastUpdated: new Date().toISOString(),
+      apiAccess: projectData.apiAccess ?? projects[index].apiAccess ?? false,
+      requestLogging:
+        projectData.requestLogging ?? projects[index].requestLogging ?? false,
+      autoScaling:
+        projectData.autoScaling ?? projects[index].autoScaling ?? false,
+      cacheResults:
+        projectData.cacheResults ?? projects[index].cacheResults ?? false,
     };
     projects[index] = updatedProject;
 

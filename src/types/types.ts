@@ -17,6 +17,10 @@ export interface Project {
   archived: boolean;
   createdAt: string;
   lastUpdated: string;
+  apiAccess?: boolean;
+  requestLogging?: boolean;
+  autoScaling?: boolean;
+  cacheResults?: boolean;
 }
 
 // LLM Types

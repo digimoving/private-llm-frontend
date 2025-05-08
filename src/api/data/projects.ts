@@ -9,6 +9,10 @@ export const projects: Project[] = [
     createdAt: "2025-04-01T10:00:00Z",
     lastUpdated: "2025-04-14T15:30:00Z",
     tags: ["customer-service", "chatbot"],
+    apiAccess: true,
+    requestLogging: true,
+    autoScaling: false,
+    cacheResults: true,
   },
   {
     id: "2",
@@ -18,6 +22,10 @@ export const projects: Project[] = [
     createdAt: "2025-03-15T09:00:00Z",
     lastUpdated: "2025-04-13T11:20:00Z",
     tags: ["recommendations", "e-commerce"],
+    apiAccess: false,
+    requestLogging: false,
+    autoScaling: true,
+    cacheResults: false,
   },
   {
     id: "3",
@@ -27,5 +35,9 @@ export const projects: Project[] = [
     createdAt: "2025-02-28T14:00:00Z",
     lastUpdated: "2025-04-10T16:45:00Z",
     tags: ["moderation", "content"],
+    apiAccess: false,
+    requestLogging: true,
+    autoScaling: false,
+    cacheResults: true,
   },
 ];
