@@ -1,5 +1,5 @@
 <template>
-  <Menu as="div" class="relative" v-model="menuOpen">
+  <Menu as="div" class="relative" v-slot="{ close }">
     <div>
       <MenuButton
         class="relative flex rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 cursor-pointer transition-colors duration-200"
@@ -85,7 +85,7 @@
             variant="flat"
             text="View all notifications"
             class="w-full text-center text-sm text-gray-600 hover:text-gray-900"
-            @click="$emit('viewAll')"
+            @click="handleViewAll(close)"
           />
         </div>
       </MenuItems>
@@ -96,7 +96,7 @@
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { BellIcon } from "@heroicons/vue/24/outline";
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import Button from "../../components/ui/Button.vue";
 
 export interface Notification {
@@ -108,7 +108,6 @@ export interface Notification {
 
 interface Props {
   notifications: Notification[];
-  open?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -117,7 +116,6 @@ const emit = defineEmits<{
   (event: "markAllAsRead"): void;
   (event: "viewAll"): void;
   (event: "notificationClick", notification: Notification): void;
-  (event: "update:open", value: boolean): void;
 }>();
 
 const unreadCount = computed(
@@ -130,20 +128,8 @@ const handleNotificationClick = (notification: Notification) => {
   }
 };
 
-// Local open state for the menu
-const menuOpen = ref(false);
-
-// Watch for prop changes to control menu open state
-watch(
-  () => props.open,
-  (val) => {
-    if (typeof val === "boolean") menuOpen.value = val;
-  },
-  { immediate: true }
-);
-
-// Emit update when menu is opened/closed
-watch(menuOpen, (val) => {
-  emit("update:open", val);
-});
+const handleViewAll = (close: () => void) => {
+  emit("viewAll");
+  close();
+};
 </script>
