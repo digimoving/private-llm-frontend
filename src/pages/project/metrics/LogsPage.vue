@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useLogsStore } from "../../../stores/logs";
-import LogsTable from "../../../components/ui/LogsTable.vue";
+import LogsTable from "../../../components/metrics/LogsTable.vue";
 import Toggle from "../../../components/ui/Toggle.vue";
 import { ArrowPathIcon } from "@heroicons/vue/24/outline";
 

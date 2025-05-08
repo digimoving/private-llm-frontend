@@ -1,5 +1,5 @@
 <template>
-  <GenericTable
+  <Table
     :items="logsStore.logs"
     :columns="columns"
     item-key="requestId"
@@ -38,7 +38,7 @@
         {{ value }}
       </div>
     </template>
-  </GenericTable>
+  </Table>
 </template>
 
 <script setup lang="ts">
@@ -46,7 +46,7 @@ import { computed, onMounted } from "vue";
 import { useLogsStore } from "../../stores/logs";
 import StatusChip from "../global/StatusChip.vue";
 import Chip from "../ui/Chip.vue";
-import GenericTable from "./GenericTable.vue";
+import Table from "./Table.vue";
 
 const logsStore = useLogsStore();
 

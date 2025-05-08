@@ -1,5 +1,5 @@
 <template>
-  <GenericTable
+  <Table
     :items="filesStore.files"
     :columns="columns"
     item-key="id"
@@ -50,7 +50,7 @@
         />
       </div>
     </template>
-  </GenericTable>
+  </Table>
 </template>
 
 <script setup lang="ts">
@@ -61,7 +61,7 @@ import Button from "./Button.vue";
 import Chip from "./Chip.vue";
 import FileIcon from "../files/FileIcon.vue";
 import { useFilesStore } from "../../stores/files";
-import GenericTable from "./GenericTable.vue";
+import Table from "./Table.vue";
 
 const filesStore = useFilesStore();
 

@@ -1,101 +1,138 @@
 <template>
-  <div class="px-4 sm:px-6 lg:px-8">
-    <div class="sm:flex sm:items-center">
-      <div class="sm:flex-auto">
-        <h1 class="text-base font-semibold text-gray-900">{{ heading }}</h1>
-        <p class="mt-2 text-sm text-gray-700">{{ subheading }}</p>
-      </div>
-      <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-        <slot name="button">
-          <button
-            v-if="buttonLabel"
-            type="button"
-            class="block rounded-md bg-primary-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
-          >
-            {{ buttonLabel }}
-          </button>
-        </slot>
-      </div>
-    </div>
-    <div class="-mx-4 mt-8 sm:-mx-0">
-      <table class="min-w-full divide-y divide-gray-300">
+  <div class="mt-8">
+    <!-- Table for desktop -->
+    <div
+      class="hidden sm:block rounded-t-lg border border-gray-200 overflow-x-auto"
+    >
+      <table class="min-w-full table-fixed divide-y divide-gray-300">
         <thead>
           <tr>
             <th
-              v-for="column in columns"
-              :key="column.key"
-              :scope="'col'"
-              :class="column.thClass"
+              v-for="col in columns"
+              :key="col.key"
+              :class="[
+                'py-3.5 text-sm font-semibold text-gray-900',
+                col.key === 'time' || col.key === 'name' ? 'px-4' : 'px-3',
+                col.align === 'center' ? 'text-center' : 'text-left',
+              ]"
             >
-              {{ column.label }}
-            </th>
-            <th scope="col" class="relative py-3.5 pr-4 pl-3 sm:pr-0">
-              <span class="sr-only">Edit</span>
+              {{ col.label }}
             </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 bg-white">
-          <tr
-            v-for="item in items"
-            :key="item[rowKey] || item.id || item._id || item.key"
-          >
+          <tr v-for="item in items" :key="getItemKey(item)">
             <td
-              class="w-full max-w-0 py-4 pr-3 pl-4 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"
+              v-for="col in columns"
+              :key="col.key"
+              :class="[
+                'px-3 py-4 text-sm',
+                col.key === 'time' || col.key === 'name'
+                  ? 'px-4 font-medium text-gray-900'
+                  : 'font-normal text-gray-500',
+                col.align === 'center' ? 'text-center' : '',
+              ]"
             >
-              {{ item[columns[0].key] }}
-              <dl class="font-normal lg:hidden">
-                <template
-                  v-for="(column, colIdx) in columns.slice(1)"
-                  :key="column.key"
-                >
-                  <dt class="sr-only">{{ column.label }}</dt>
-                  <dd :class="column.dlClass">{{ item[column.key] }}</dd>
+              <slot :name="col.key" :item="item" :value="item[col.key]">
+                <template v-if="col.render">
+                  <component
+                    :is="col.render"
+                    :item="item"
+                    :value="item[col.key]"
+                  />
                 </template>
-              </dl>
-            </td>
-            <td
-              v-for="(column, colIdx) in columns.slice(1)"
-              :key="column.key"
-              :class="column.tdClass"
-            >
-              {{ item[column.key] }}
-            </td>
-            <td class="py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-0">
-              <a href="#" class="text-primary-600 hover:text-primary-900">
-                Edit<span class="sr-only">, {{ item[columns[0].key] }}</span>
-              </a>
+                <template v-else>
+                  {{ item[col.key] }}
+                </template>
+              </slot>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Table for mobile -->
+    <div class="sm:hidden space-y-4">
+      <div
+        v-for="item in items"
+        :key="getItemKey(item)"
+        class="bg-white shadow rounded-lg p-4 flex flex-col gap-2"
+      >
+        <template v-for="col in columns" :key="col.key">
+          <div
+            v-if="!col.hideOnMobile && col.key !== 'prompt'"
+            :class="'flex justify-between items-center text-xs '"
+          >
+            <span class="font-medium text-gray-900">{{ col.label }}</span>
+            <span class="font-normal text-gray-500">
+              <slot :name="col.key" :item="item" :value="item[col.key]">
+                <template v-if="col.render">
+                  <component
+                    :is="col.render"
+                    :item="item"
+                    :value="item[col.key]"
+                  />
+                </template>
+                <template v-else>
+                  {{ item[col.key] }}
+                </template>
+              </slot>
+            </span>
+          </div>
+          <!-- Special handling for prompt on mobile -->
+          <div
+            v-if="col.key === 'prompt'"
+            class="text-xs text-gray-900 mt-1 break-words whitespace-pre-line"
+          >
+            <span class="font-medium">{{ col.label }}</span>
+            <slot name="promptMobile" :value="item[col.key]">
+              {{ item[col.key] }}
+            </slot>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <Pagination
+      :current-page="currentPage"
+      :total-pages="Math.ceil((totalItems || items.length) / pageSize)"
+      :page-size="pageSize"
+      :total-items="totalItems || items.length"
+      @pageChange="$emit('pageChange', $event)"
+      class="border border-gray-200 rounded-b-lg"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, withDefaults } from "vue";
+import Pagination from "./Pagination.vue";
 
 interface Column {
   key: string;
   label: string;
-  thClass?: string;
-  tdClass?: string;
-  dlClass?: string;
+  align?: "left" | "center" | "right";
+  hideOnMobile?: boolean;
+  render?: any; // Component to render for this column
 }
 
 interface Props {
-  heading?: string;
-  subheading?: string;
-  buttonLabel?: string;
-  columns: Column[];
   items: any[];
-  rowKey?: string;
+  columns: Column[];
+  itemKey?: string;
+  currentPage?: number;
+  pageSize?: number;
+  totalItems?: number;
 }
 
-withDefaults(defineProps<Props>(), {
-  heading: "Table",
-  subheading: "A list of items.",
-  buttonLabel: "",
-  rowKey: "id",
+const props = withDefaults(defineProps<Props>(), {
+  itemKey: "id",
+  currentPage: 1,
+  pageSize: 10,
+  totalItems: 0,
 });
+
+const getItemKey = (item: any) => {
+  return item[props.itemKey];
+};
 </script>

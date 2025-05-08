@@ -70,7 +70,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: "files",
         name: "project-files",
-        component: () => import("../pages/project/FilesPage.vue"),
+        component: () => import("../pages/project/metrics/FilesPage.vue"),
         meta: projectMetadata["project-files"],
       },
       {
