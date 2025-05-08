@@ -1,5 +1,14 @@
 <template>
-  <GenericTable :items="reportsStore.reports" :columns="columns" item-key="id">
+  <GenericTable
+    :items="reportsStore.reports"
+    :columns="columns"
+    item-key="id"
+    :show-pagination="true"
+    :current-page="currentPage"
+    :page-size="pageSize"
+    :total-items="reportsStore.totalReports"
+    @pageChange="reportsStore.setPage($event)"
+  >
     <template #models="{ value }">
       <div class="flex flex-wrap gap-2">
         <span
@@ -38,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from "vue";
 import { useDateFormat } from "@vueuse/core";
 import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/vue/24/outline";
 import Button from "../ui/Button.vue";
@@ -55,4 +65,14 @@ const columns = [
   { key: "timeRange", label: "Time Range", hideOnMobile: true },
   { key: "actions", label: "Actions", align: "center" as const },
 ];
+
+const currentPage = computed({
+  get: () => reportsStore.currentPage,
+  set: (val) => reportsStore.setPage(val),
+});
+const pageSize = reportsStore.pageSize;
+
+onMounted(() => {
+  reportsStore.setPage(1);
+});
 </script>

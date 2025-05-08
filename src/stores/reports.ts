@@ -11,6 +11,9 @@ interface LoadingState {
 export const useReportsStore = defineStore("reports", {
   state: () => ({
     reports: [] as Report[],
+    totalReports: 0,
+    currentPage: 1,
+    pageSize: 10,
     error: null as string | null,
     loading: {
       reports: false,
@@ -28,15 +31,21 @@ export const useReportsStore = defineStore("reports", {
         (value: boolean) => value === true
       );
     },
+    totalPages: (state) => Math.ceil(state.totalReports / state.pageSize),
   },
 
   actions: {
-    async loadReports() {
+    async loadReports(page?: number) {
+      const pageToLoad = page ?? this.currentPage;
       try {
         this.loading.reports = true;
         this.error = null;
-        const response = await reportsApi.list();
-        this.reports = response.reports;
+        const { reports, total } = await reportsApi.list(
+          pageToLoad,
+          this.pageSize
+        );
+        this.reports = reports;
+        this.totalReports = total;
       } catch (err) {
         this.error =
           err instanceof Error ? err.message : "Failed to load reports";
@@ -44,6 +53,11 @@ export const useReportsStore = defineStore("reports", {
       } finally {
         this.loading.reports = false;
       }
+    },
+
+    setPage(page: number) {
+      this.currentPage = page;
+      this.loadReports(page);
     },
 
     async deleteReport(reportId: string) {

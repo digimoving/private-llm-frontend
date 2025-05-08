@@ -1,58 +1,15 @@
-import type { Report } from "../../types/reports";
-
-export const mockReports: Report[] = [
-  {
-    id: "1",
-    name: "Weekly Performance Report",
-    date: "2025-04-14",
-    models: ["Support Agent"],
-    metrics: "Token usage, cost analysis",
-    format: "PDF",
-    timeRange: "Last 7 days",
-  },
-  {
-    id: "2",
-    name: "Monthly Cost Analysis",
-    date: "2025-04-01",
-    models: ["Support Agent"],
-    metrics: "Request count",
-    format: "Excel",
-    timeRange: "Last 30 days",
-  },
-  {
-    id: "3",
-    name: "March LLM Report",
-    date: "2025-04-01",
-    models: ["Support Agent", "Content Generator"],
-    metrics: "Request count",
-    format: "Excel",
-    timeRange: "Last 30 days",
-  },
-  {
-    id: "4",
-    name: "Weekly Performance Report",
-    date: "2025-03-07",
-    models: ["Support Agent"],
-    metrics: "Error rate, token usage",
-    format: "PDF",
-    timeRange: "Last 7 days",
-  },
-  {
-    id: "5",
-    name: "Monthly Cost Analysis",
-    date: "2025-03-01",
-    models: ["Content Generator"],
-    metrics: "Request count, response time",
-    format: "Excel",
-    timeRange: "Last 30 days",
-  },
-  {
-    id: "6",
-    name: "February LLM Report",
-    date: "2025-03-01",
-    models: ["Support Agent", "Content Generator"],
-    metrics: "Token usage",
-    format: "Excel",
-    timeRange: "Last 30 days",
-  },
-];
+export const mockReports = Array.from({ length: 30 }, (_, i) => {
+  const idx = i + 1;
+  return {
+    id: `report_${idx}`,
+    name: `Report ${idx}`,
+    date: `2024-04-${((idx % 30) + 1).toString().padStart(2, "0")}`,
+    models:
+      idx % 2 === 0
+        ? ["Support Agent"]
+        : ["Content Generator", "Support Agent"],
+    metrics: idx % 2 === 0 ? "Tokens, Latency" : "Tokens, Status, Latency",
+    format: idx % 3 === 0 ? "PDF" : idx % 3 === 1 ? "CSV" : "XLSX",
+    timeRange: `2024-04-01 to 2024-04-${((idx % 30) + 1).toString().padStart(2, "0")}`,
+  };
+});

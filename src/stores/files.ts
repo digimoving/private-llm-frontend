@@ -12,6 +12,9 @@ interface LoadingState {
 export const useFilesStore = defineStore("files", {
   state: () => ({
     files: [] as File[],
+    totalFiles: 0,
+    currentPage: 1,
+    pageSize: 10,
     error: null as string | null,
     loading: {
       files: false,
@@ -30,15 +33,21 @@ export const useFilesStore = defineStore("files", {
         (value: boolean) => value === true
       );
     },
+    totalPages: (state) => Math.ceil(state.totalFiles / state.pageSize),
   },
 
   actions: {
-    async loadFiles() {
+    async loadFiles(page?: number) {
+      const pageToLoad = page ?? this.currentPage;
       try {
         this.loading.files = true;
         this.error = null;
-        const response = await filesApi.list();
-        this.files = response.files;
+        const { files, total } = await filesApi.list(pageToLoad, this.pageSize);
+        this.files = files.map((file) => ({
+          ...file,
+          size: file.size.toString(),
+        }));
+        this.totalFiles = total;
       } catch (err) {
         this.error =
           err instanceof Error ? err.message : "Failed to load files";
@@ -46,6 +55,11 @@ export const useFilesStore = defineStore("files", {
       } finally {
         this.loading.files = false;
       }
+    },
+
+    setPage(page: number) {
+      this.currentPage = page;
+      this.loadFiles(page);
     },
 
     async uploadFiles(fileList: FileList) {

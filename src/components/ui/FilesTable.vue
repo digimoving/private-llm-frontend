@@ -1,5 +1,14 @@
 <template>
-  <GenericTable :items="filesStore.files" :columns="columns" item-key="id">
+  <GenericTable
+    :items="filesStore.files"
+    :columns="columns"
+    item-key="id"
+    :show-pagination="true"
+    :current-page="currentPage"
+    :page-size="pageSize"
+    :total-items="filesStore.totalFiles"
+    @pageChange="filesStore.setPage($event)"
+  >
     <template #name="{ value, item }">
       <div class="flex items-center gap-3">
         <FileIcon :type="item.type" />
@@ -45,6 +54,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from "vue";
 import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/vue/24/outline";
 import { useDateFormat } from "@vueuse/core";
 import Button from "./Button.vue";
@@ -63,4 +73,14 @@ const columns = [
   { key: "tags", label: "Tags", hideOnTablet: true },
   { key: "actions", label: "Actions", align: "center" as const },
 ];
+
+const currentPage = computed({
+  get: () => filesStore.currentPage,
+  set: (val) => filesStore.setPage(val),
+});
+const pageSize = filesStore.pageSize;
+
+onMounted(() => {
+  filesStore.setPage(1);
+});
 </script>

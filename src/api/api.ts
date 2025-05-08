@@ -6,7 +6,7 @@ import type {
   LLMListParams,
 } from "../types/types";
 import type { FileListResponse, FileUploadResponse } from "../types/types";
-import type { Report, ReportListResponse } from "../types/types";
+import type { ReportListResponse } from "../types/types";
 import { projects } from "./data/projects";
 import { notifications } from "./data/notifications";
 import { llms } from "./data/llms";
@@ -324,10 +324,12 @@ export const notificationsApi = {
 };
 
 export const filesApi = {
-  async list(): Promise<FileListResponse> {
+  async list(page = 1, pageSize = 10) {
     await delay(500); // Simulate network delay
+    const start = (page - 1) * pageSize;
+    const pagedFiles = mockFiles.slice(start, start + pageSize);
     return {
-      files: mockFiles,
+      files: pagedFiles,
       total: mockFiles.length,
     };
   },
@@ -363,10 +365,12 @@ export const filesApi = {
 };
 
 export const reportsApi = {
-  async list(): Promise<ReportListResponse> {
+  async list(page = 1, pageSize = 10) {
     await delay(500); // Simulate network delay
+    const start = (page - 1) * pageSize;
+    const pagedReports = mockReports.slice(start, start + pageSize);
     return {
-      reports: mockReports,
+      reports: pagedReports,
       total: mockReports.length,
     };
   },

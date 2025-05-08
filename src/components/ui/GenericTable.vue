@@ -2,7 +2,7 @@
   <div class="mt-8">
     <!-- Table for desktop -->
     <div
-      class="hidden sm:block rounded-lg border border-gray-200 overflow-x-auto"
+      class="hidden sm:block rounded-t-lg border border-gray-200 overflow-x-auto"
     >
       <table class="min-w-full table-fixed divide-y divide-gray-300">
         <thead>
@@ -92,10 +92,22 @@
         </template>
       </div>
     </div>
+
+    <!-- Pagination -->
+    <Pagination
+      :current-page="currentPage"
+      :total-pages="Math.ceil((totalItems || items.length) / pageSize)"
+      :page-size="pageSize"
+      :total-items="totalItems || items.length"
+      @pageChange="$emit('pageChange', $event)"
+      class="border border-gray-200 rounded-b-lg"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import Pagination from "./Pagination.vue";
+
 interface Column {
   key: string;
   label: string;
@@ -108,10 +120,16 @@ interface Props {
   items: any[];
   columns: Column[];
   itemKey?: string;
+  currentPage?: number;
+  pageSize?: number;
+  totalItems?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   itemKey: "id",
+  currentPage: 1,
+  pageSize: 10,
+  totalItems: 0,
 });
 
 const getItemKey = (item: any) => {
