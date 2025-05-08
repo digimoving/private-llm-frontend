@@ -1,5 +1,5 @@
 <template>
-  <GenericTable
+  <Table
     :items="reportsStore.reports"
     :columns="columns"
     item-key="id"
@@ -43,7 +43,7 @@
         />
       </div>
     </template>
-  </GenericTable>
+  </Table>
 </template>
 
 <script setup lang="ts">
@@ -52,7 +52,7 @@ import { useDateFormat } from "@vueuse/core";
 import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/vue/24/outline";
 import Button from "../ui/Button.vue";
 import { useReportsStore } from "../../stores/reports";
-import GenericTable from "./GenericTable.vue";
+import Table from "./Table.vue";
 
 const reportsStore = useReportsStore();
 

@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
-import ReportsTable from "../../../components/ui/ReportsTable.vue";
+import ReportsTable from "../../../components/metrics/ReportsTable.vue";
 import { PlusIcon, XCircleIcon } from "@heroicons/vue/24/outline";
 import Button from "../../../components/ui/Button.vue";
 import { useReportsStore } from "../../../stores/reports";
