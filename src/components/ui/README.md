@@ -322,5 +322,5 @@ A switch component that can be toggled on and off with customisable colours.
 
 - The toggle uses Tailwind's colour classes for the active state
 - The inactive state is always gray (`bg-gray-200`)
-- The focus ring colour is always indigo to maintain consistency
+- The focus ring colour is always primary to maintain consistency
 - The component is built on top of Headless UI's Switch component

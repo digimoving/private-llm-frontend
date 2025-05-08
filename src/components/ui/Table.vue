@@ -10,7 +10,7 @@
           <button
             v-if="buttonLabel"
             type="button"
-            class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            class="block rounded-md bg-primary-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
           >
             {{ buttonLabel }}
           </button>
@@ -61,7 +61,7 @@
               {{ item[column.key] }}
             </td>
             <td class="py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-0">
-              <a href="#" class="text-indigo-600 hover:text-indigo-900">
+              <a href="#" class="text-primary-600 hover:text-primary-900">
                 Edit<span class="sr-only">, {{ item[columns[0].key] }}</span>
               </a>
             </td>

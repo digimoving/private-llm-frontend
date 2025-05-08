@@ -19,10 +19,10 @@
         href="#"
         :aria-current="page === currentPage ? 'page' : undefined"
         @click.prevent="goToPage(page)"
-        class="relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        class="relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
         :class="
           page === currentPage
-            ? 'z-10 bg-indigo-600 text-white'
+            ? 'z-10 bg-primary-600 text-white'
             : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'
         "
       >
