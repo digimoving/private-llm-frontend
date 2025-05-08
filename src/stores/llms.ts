@@ -59,6 +59,10 @@ export const useLLMsStore = defineStore("llms", {
     getLLMsByTag: (state) => (tag: string) => {
       return state.llms.filter((llm) => llm.tags?.includes(tag));
     },
+
+    llmNames: (state) => {
+      return state.llms.map((llm) => llm.name);
+    },
   },
 
   actions: {

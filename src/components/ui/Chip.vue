@@ -22,6 +22,7 @@ const sizeClasses = {
 
 <template>
   <span
+    v-bind="$attrs"
     class="inline-flex items-center rounded-full font-medium"
     :class="[sizeClasses[size]]"
   >

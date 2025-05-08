@@ -24,62 +24,7 @@
       </div>
     </div>
 
-    <Table
-      :columns="columns"
-      :items="filesStore.files"
-      :loading="filesStore.isLoading"
-      class="px-8"
-    >
-      <template #name="{ item }">
-        <div class="flex items-center gap-3">
-          <FileIcon :type="item.type" />
-          <span class="font-medium text-gray-900">{{ item.name }}</span>
-        </div>
-      </template>
-
-      <template #type="{ item }">
-        <span class="text-gray-500">{{ item.type }}</span>
-      </template>
-
-      <template #size="{ item }">
-        <span class="text-gray-500">{{ item.size }}</span>
-      </template>
-
-      <template #uploadDate="{ item }">
-        <span class="text-gray-500">{{
-          useDateFormat(item.uploadDate, "DD/MM/YYYY").value
-        }}</span>
-      </template>
-
-      <template #tags="{ item }">
-        <div class="flex gap-1">
-          <Chip
-            v-for="tag in item.tags"
-            :key="tag"
-            size="xs"
-            :text="tag"
-            class="bg-secondary-100 text-secondary-700"
-          />
-        </div>
-      </template>
-
-      <template #actions="{ item }">
-        <div class="flex justify-end gap-2">
-          <Button
-            :icon="ArrowDownTrayIcon"
-            variant="icon"
-            :loading="filesStore.downloadingFileIds.has(item.id)"
-            @click="filesStore.downloadFile(item.id)"
-          />
-          <Button
-            :icon="TrashIcon"
-            variant="icon"
-            :loading="filesStore.deletingFileIds.has(item.id)"
-            @click="filesStore.deleteFile(item.id)"
-          />
-        </div>
-      </template>
-    </Table>
+    <FilesTable />
 
     <FileUpload
       :is-open="showUploadModal"
@@ -93,30 +38,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useFilesStore } from "../../stores/files";
-import { useDateFormat } from "@vueuse/core";
-import Chip from "../../components/ui/Chip.vue";
-import FileIcon from "../../components/files/FileIcon.vue";
-import Table from "../../components/ui/Table.vue";
+import FilesTable from "../../components/ui/FilesTable.vue";
 import Button from "../../components/ui/Button.vue";
 import FileUpload from "../../components/files/FileUpload.vue";
-import {
-  ArrowUpTrayIcon,
-  ArrowDownTrayIcon,
-  TrashIcon,
-  XCircleIcon,
-} from "@heroicons/vue/24/outline";
+import { ArrowUpTrayIcon, XCircleIcon } from "@heroicons/vue/24/outline";
 
 const showUploadModal = ref(false);
 const filesStore = useFilesStore();
-
-const columns = [
-  { key: "name", label: "Name" },
-  { key: "type", label: "Type", hideOnMobile: true },
-  { key: "size", label: "Size", hideOnMobile: true },
-  { key: "uploadDate", label: "Upload Date", hideOnTablet: true },
-  { key: "tags", label: "Tags", hideOnTablet: true },
-  { key: "actions", label: "Actions" },
-];
 
 const handleFiles = async (fileList: FileList) => {
   await filesStore.uploadFiles(fileList);
