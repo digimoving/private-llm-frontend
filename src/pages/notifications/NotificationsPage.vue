@@ -1,19 +1,24 @@
 <template>
-  <div class="container mx-auto px-4 py-6">
+  <div class="py-6">
     <div class="mb-8 flex items-center justify-between">
       <div class="flex space-x-1 rounded-lg bg-gray-100 p-1">
         <Button
           v-for="filter in filters"
           :key="filter.id"
+          :class="
+            activeFilter === filter.id
+              ? 'bg-primary!'
+              : 'bg-gray-100! text-gray-500!'
+          "
           @click="activeFilter = filter.id"
-          :variant="activeFilter === filter.id ? 'primary' : 'flat'"
           size="sm"
           class="!rounded-md"
         >
           {{ filter.label }}
           <span
             v-if="filter.id === 'unread' && unreadCount > 0"
-            class="ml-1 text-xs text-gray-500"
+            class="ml-1 text-xs"
+            :class="activeFilter === filter.id ? 'text-white' : 'text-gray-500'"
           >
             {{ unreadCount }}
           </span>
