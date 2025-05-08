@@ -1,5 +1,6 @@
 <template>
   <button
+    v-bind="$attrs"
     :type="type"
     :class="[
       'inline-flex items-center font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200',

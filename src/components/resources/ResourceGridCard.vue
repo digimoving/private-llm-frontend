@@ -2,10 +2,11 @@
   <div
     class="relative bg-white rounded-lg border border-gray-200 p-6 transition-shadow duration-200 flex flex-col h-[250px]"
     :class="{
-      'hover:shadow-sm cursor-pointer': !isDisabled,
+      'hover:shadow-sm cursor-pointer':
+        !isDisabled && resourceType === 'project',
       'opacity-75 cursor-not-allowed': isDisabled,
     }"
-    @click="!isDisabled && navigateToResource()"
+    @click="handleCardClick"
   >
     <div class="flex items-center justify-between">
       <StatusChip :status="getResourceStatus(resource)" />
@@ -112,5 +113,12 @@ const getResourceStatus = (
   if (resource.archived) return "archived";
   if ("paused" in resource && resource.paused) return "paused";
   return "active";
+};
+
+const handleCardClick = (event: MouseEvent) => {
+  if (props.resourceType === "project" && !isDisabled.value) {
+    navigateToResource();
+  }
+  // For LLMs, do nothing
 };
 </script>

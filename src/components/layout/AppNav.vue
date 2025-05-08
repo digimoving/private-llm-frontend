@@ -4,13 +4,18 @@
       <div class="flex h-16 items-center justify-between">
         <!-- Logo -->
         <div class="flex items-center">
-          <div class="shrink-0">
+          <Button
+            variant="icon"
+            @click="goToProjects"
+            aria-label="Go to Projects"
+            class="!hover:bg-transparent !bg-transparent"
+          >
             <img
               class="h-8 w-auto"
               src="../../assets/logo.svg"
               alt="Private LLM"
             />
-          </div>
+          </Button>
         </div>
 
         <!-- Desktop Navigation -->
@@ -18,9 +23,11 @@
           <div class="flex items-center gap-2">
             <NotificationMenu
               :notifications="notifications"
+              :open="notificationMenuOpen"
               @markAllAsRead="handleMarkAllAsRead"
               @viewAll="handleViewAll"
               @notificationClick="handleNotificationClick"
+              @update:open="notificationMenuOpen = $event"
             />
             <Menu :items="userMenuItems" />
           </div>
@@ -108,6 +115,7 @@ import {
 import { computed, ref } from "vue";
 import type { Notification } from "../notifications/NotificationsMenu.vue";
 import Button from "../ui/Button.vue";
+import { useRouter } from "vue-router";
 
 // Example notifications - in real app, this would likely come from a store or props
 const notifications = ref<Notification[]>([
@@ -129,6 +137,11 @@ const unreadCount = computed(
   () => notifications.value.filter((n: Notification) => !n.read).length
 );
 
+const router = useRouter();
+
+// Ref to control notification menu open state
+const notificationMenuOpen = ref(false);
+
 const handleMarkAllAsRead = () => {
   notifications.value = notifications.value.map((n: Notification) => ({
     ...n,
@@ -146,13 +159,17 @@ const handleNotificationClick = (notification: Notification) => {
 };
 
 const handleViewAll = () => {
-  // Navigate to notifications page
-  console.log("Navigate to notifications page");
+  router.push({ name: "notifications" });
+  notificationMenuOpen.value = false;
 };
 
 const handleMobileNotificationClick = () => {
   // Navigate to notifications page on mobile
   handleViewAll();
+};
+
+const goToProjects = () => {
+  router.push({ name: "projects" });
 };
 
 const userMenuItems = [

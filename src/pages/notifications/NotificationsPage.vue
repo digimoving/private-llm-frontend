@@ -44,7 +44,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useNotificationsStore } from "../../stores/notifications";
-import type { Notification } from "../../types/types";
 import NotificationsList from "../../components/notifications/NotificationsList.vue";
 import Button from "../../components/ui/Button.vue";
 import LoadingSpinner from "../../components/ui/LoadingSpinner.vue";
