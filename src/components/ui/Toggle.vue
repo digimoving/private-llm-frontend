@@ -53,7 +53,7 @@ const activeColorClass = computed(() => {
       return "bg-error-600";
     case "secondary":
     default:
-      return "bg-secondary-600";
+      return "bg-primary-600";
   }
 });
 
