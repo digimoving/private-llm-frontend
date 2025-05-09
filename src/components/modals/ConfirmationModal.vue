@@ -5,7 +5,7 @@
     :primary-button="{
       text: primaryButtonText,
       variant: 'danger',
-      disabled: inputText !== confirmationText,
+      disabled: requireInput ? inputText !== confirmationText : false,
     }"
     @primary-click="handleConfirm"
     @secondary-click="$emit('update:modelValue', false)"
@@ -17,7 +17,7 @@
 
       <slot name="details" />
 
-      <div class="mt-6">
+      <div v-if="requireInput" class="mt-6">
         <p class="mb-2">
           {{ confirmationPrompt }}
           <span class="font-mono text-gray-900">{{ confirmationText }}</span>
@@ -50,12 +50,14 @@ interface Props {
   primaryButtonText: string;
   confirmationPrompt?: string;
   errorMessage?: string;
+  requireInput?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   confirmationPrompt: "Confirm by typing",
   errorMessage:
     "Please type the project name exactly as shown above to confirm",
+  requireInput: true,
 });
 
 const emit = defineEmits<{
@@ -71,7 +73,7 @@ const confirmationText = computed(() => {
 });
 
 const handleConfirm = () => {
-  if (inputText.value !== confirmationText.value) {
+  if (props.requireInput && inputText.value !== confirmationText.value) {
     showError.value = true;
     return;
   }
