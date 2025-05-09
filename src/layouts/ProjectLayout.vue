@@ -16,7 +16,6 @@
             {{ route.meta.subtitle }}
           </p>
         </div>
-
         <div class="min-h-[calc(100vh-16rem)]">
           <router-view />
         </div>
