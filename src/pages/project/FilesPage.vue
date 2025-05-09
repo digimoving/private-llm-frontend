@@ -37,10 +37,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useFilesStore } from "../../../stores/files";
-import FilesTable from "../../../components/metrics/FilesTable.vue";
-import Button from "../../../components/ui/Button.vue";
-import FileUpload from "../../../components/files/FileUpload.vue";
+import { useFilesStore } from "../../stores/files";
+import FilesTable from "../../components/metrics/FilesTable.vue";
+import Button from "../../components/ui/Button.vue";
+import FileUpload from "../../components/files/FileUpload.vue";
 import { ArrowUpTrayIcon, XCircleIcon } from "@heroicons/vue/24/outline";
 
 const showUploadModal = ref(false);

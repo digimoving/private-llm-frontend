@@ -23,27 +23,11 @@
         <div class="border-t my-6" />
         <div class="space-y-6">
           <Toggle
-            v-model="form.apiAccess"
-            label="API Access"
-            description="Enable API access to this project"
-            :disabled="loading"
-          />
-          <Toggle
-            v-model="form.requestLogging"
-            label="Request Logging"
-            description="Log all requests for analysis"
-            :disabled="loading"
-          />
-          <Toggle
-            v-model="form.autoScaling"
-            label="Auto-scaling"
-            description="Automatically scale resources based on usage"
-            :disabled="loading"
-          />
-          <Toggle
-            v-model="form.cacheResults"
-            label="Cache results"
-            description="Cache responses for similar requests"
+            v-for="field in toggleFields"
+            :key="field.key"
+            v-model="form[field.key]"
+            :label="field.label"
+            :description="field.description"
             :disabled="loading"
           />
         </div>
@@ -64,13 +48,12 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useProjectsStore } from "../../stores/projects";
 import Input from "../../components/ui/Input.vue";
 import Toggle from "../../components/ui/Toggle.vue";
 import Button from "../../components/ui/Button.vue";
 
-const route = useRoute();
 const router = useRouter();
 const projectsStore = useProjectsStore();
 
@@ -78,7 +61,15 @@ const loading = ref(false);
 
 const currentProject = computed(() => projectsStore.currentProject);
 
-const form = ref({
+const form = ref<{
+  name: string;
+  description: string;
+  apiAccess: boolean;
+  requestLogging: boolean;
+  autoScaling: boolean;
+  cacheResults: boolean;
+  [key: string]: any;
+}>({
   name: "",
   description: "",
   apiAccess: false,
@@ -86,6 +77,29 @@ const form = ref({
   autoScaling: false,
   cacheResults: false,
 });
+
+const toggleFields = [
+  {
+    key: "apiAccess",
+    label: "API Access",
+    description: "Enable API access to this project",
+  },
+  {
+    key: "requestLogging",
+    label: "Request Logging",
+    description: "Log all requests for analysis",
+  },
+  {
+    key: "autoScaling",
+    label: "Auto-scaling",
+    description: "Automatically scale resources based on usage",
+  },
+  {
+    key: "cacheResults",
+    label: "Cache results",
+    description: "Cache responses for similar requests",
+  },
+];
 
 watch(
   currentProject,
