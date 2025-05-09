@@ -14,6 +14,7 @@ import { mockReports } from "./data/reports";
 import { useFileSize } from "../composables/useFileSize";
 import { mockLogs } from "./data/logs";
 import { mockMetrics } from "./data/metrics";
+import { accountData } from "./data/account";
 
 // Simulated delay to mimic API calls
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -376,7 +377,7 @@ export const filesApi = {
 
 export const reportsApi = {
   async list(page = 1, pageSize = 10) {
-    await delay(500); // Simulate network delay
+    await delay(500);
     const start = (page - 1) * pageSize;
     const pagedReports = mockReports.slice(start, start + pageSize);
     return {
@@ -386,7 +387,7 @@ export const reportsApi = {
   },
 
   async delete(reportId: string): Promise<void> {
-    await delay(300); // Simulate delete delay
+    await delay(300);
     const index = mockReports.findIndex((r) => r.id === reportId);
     if (index !== -1) {
       mockReports.splice(index, 1);
@@ -394,14 +395,33 @@ export const reportsApi = {
   },
 
   async download(reportId: string): Promise<Blob> {
-    await delay(300); // Simulate download delay
+    await delay(300);
     const report = mockReports.find((r) => r.id === reportId);
     if (!report) {
       throw new Error("Report not found");
     }
-    // Return a mock blob
     return new Blob([`Mock content for ${report.name}`], {
       type: "text/plain",
+    });
+  },
+
+  async generate(data: {
+    name: string;
+    timeRange: string;
+    models?: string[];
+    metrics: string[];
+    format: "csv" | "json" | "pdf";
+  }) {
+    await delay(1000);
+    return Promise.resolve({
+      id: `report_${Date.now()}`,
+      name: data.name,
+      date: new Date().toISOString(),
+      models: data.models || [],
+      metrics: data.metrics,
+      format: data.format,
+      timeRange: data.timeRange,
+      fileUrl: `/reports/${Date.now()}.${data.format}`,
     });
   },
 };
@@ -458,5 +478,214 @@ export const metricsApi = {
       };
     }
     return { data: mockMetrics };
+  },
+};
+
+export const billingApi = {
+  async get() {
+    await delay(300);
+    return Promise.resolve({
+      balance: 10.97,
+      autoRechargeEnabled: false,
+      cards: accountData.billing.cards,
+    });
+  },
+
+  async updateAutoRecharge(enabled: boolean) {
+    await delay(300);
+    return Promise.resolve({ success: true });
+  },
+
+  async getCredit() {
+    await delay(300);
+    return Promise.resolve({
+      totalCredit: 100,
+      sources: [
+        {
+          amount: 100,
+          source: "promo",
+          status: "active",
+          expires: "2024-12-31",
+        },
+      ],
+    });
+  },
+
+  async redeemCredit(amount: number) {
+    await delay(300);
+    return Promise.resolve({ success: true });
+  },
+
+  async listPaymentMethods() {
+    await delay(300);
+    return Promise.resolve(accountData.billing.cards);
+  },
+
+  async addPaymentMethod(data: {
+    cardNumber: string;
+    expiryMonth: number;
+    expiryYear: number;
+  }) {
+    await delay(500);
+    return Promise.resolve({ success: true });
+  },
+
+  async deletePaymentMethod(methodId: string) {
+    await delay(300);
+    return Promise.resolve({ success: true });
+  },
+
+  async setDefaultPaymentMethod(methodId: string) {
+    await delay(300);
+    return Promise.resolve({ success: true });
+  },
+
+  async getHistory() {
+    await delay(300);
+    return Promise.resolve([
+      {
+        invoiceName: "INV-001",
+        created: "2024-04-01T12:00:00Z",
+        cost: 50.0,
+        status: "paid",
+      },
+    ]);
+  },
+
+  async downloadInvoice(invoiceId: string) {
+    await delay(300);
+    return Promise.resolve(
+      new Blob(["Mock invoice content"], { type: "application/pdf" })
+    );
+  },
+
+  async getPreferences() {
+    await delay(300);
+    return Promise.resolve({
+      name: "John Doe",
+      email: "john@example.com",
+      company: "Example Corp",
+      taxId: "123456789",
+      address: "123 Main St",
+      city: "New York",
+      postcode: "10001",
+      country: "US",
+      currency: "USD",
+      notificationsEnabled: true,
+    });
+  },
+
+  async updatePreferences(preferences: {
+    name?: string;
+    email?: string;
+    company?: string;
+    taxId?: string;
+    address?: string;
+    city?: string;
+    postcode?: string;
+    country?: string;
+    currency?: string;
+    notificationsEnabled?: boolean;
+  }) {
+    await delay(300);
+    return Promise.resolve({ success: true });
+  },
+
+  async getOverview() {
+    await delay(300);
+    return Promise.resolve({
+      balance: 100.0,
+      autoRechargeEnabled: false,
+    });
+  },
+
+  async addBalance(data: { amount: number; paymentMethodId: string }) {
+    await delay(500);
+    return Promise.resolve({ success: true });
+  },
+
+  async updateAutoRechargeSettings(data: {
+    rechargeAmount: number;
+    triggerAmount: number;
+    paymentMethodId: string;
+  }) {
+    await delay(300);
+    return Promise.resolve({ success: true });
+  },
+
+  async disableAutoRecharge() {
+    await delay(300);
+    return Promise.resolve({ success: true });
+  },
+
+  async getLimits() {
+    await delay(300);
+    return Promise.resolve({
+      currentUsage: 75,
+      lowerThreshold: 50,
+      upperThreshold: 90,
+    });
+  },
+
+  async updateLimits(data: { lowerThreshold: number; upperThreshold: number }) {
+    await delay(300);
+    return Promise.resolve({ success: true });
+  },
+
+  async requestLimitIncrease(data: { requestedLimit: number; reason: string }) {
+    await delay(300);
+    return Promise.resolve({ success: true });
+  },
+};
+
+export const authApi = {
+  async register(email: string, password: string): Promise<void> {
+    await delay(500);
+    return Promise.resolve();
+  },
+
+  async login(email: string, password: string): Promise<void> {
+    await delay(300);
+    return Promise.resolve();
+  },
+
+  async logout(): Promise<void> {
+    await delay(200);
+    return Promise.resolve();
+  },
+
+  async forgotPassword(email: string): Promise<void> {
+    await delay(300);
+    return Promise.resolve();
+  },
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    await delay(300);
+    return Promise.resolve();
+  },
+};
+
+export const accountApi = {
+  async updatePreferences(preferences: { darkMode?: boolean }): Promise<void> {
+    await delay(300);
+    return Promise.resolve();
+  },
+
+  async updatePassword(
+    currentPassword: string,
+    newPassword: string
+  ): Promise<void> {
+    await delay(300);
+    return Promise.resolve();
+  },
+
+  async updateEmail(newEmail: string): Promise<void> {
+    await delay(300);
+    return Promise.resolve();
+  },
+
+  async delete(confirmEmail: string): Promise<void> {
+    await delay(300);
+    return Promise.resolve();
   },
 };

@@ -22,6 +22,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import("../pages/notifications/NotificationsPage.vue"),
         meta: dashboardMetadata.notifications,
       },
+      {
+        path: "billing",
+        name: "billing",
+        component: () => import("../pages/billing/BillingPage.vue"),
+        meta: { title: "Billing" },
+      },
     ],
   },
   {
@@ -70,7 +76,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: "files",
         name: "project-files",
-        component: () => import("../pages/project/metrics/FilesPage.vue"),
+        component: () => import("../pages/project/FilesPage.vue"),
         meta: projectMetadata["project-files"],
       },
       {
