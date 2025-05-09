@@ -16,6 +16,7 @@
           :placeholder="field.placeholder"
           :helper-text="field.helperText"
           :options="field.options"
+          :prefix="field.prefix"
           :class="[field.type === 'textarea' ? 'col-span-2' : '']"
         />
       </div>
@@ -34,11 +35,12 @@ export interface FormField {
   placeholder?: string;
   helperText?: string;
   options?: { label: string; value: string }[];
+  prefix?: string;
 }
 
 interface Props {
-  title: string;
-  subtitle: string;
+  title?: string;
+  subtitle?: string;
   fields: FormField[];
   initialValues?: Record<string, string>;
   useGrid?: boolean;
