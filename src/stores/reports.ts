@@ -6,6 +6,7 @@ interface LoadingState {
   reports: boolean;
   delete: boolean;
   download: boolean;
+  generate: boolean;
 }
 
 export const useReportsStore = defineStore("reports", {
@@ -19,6 +20,7 @@ export const useReportsStore = defineStore("reports", {
       reports: false,
       delete: false,
       download: false,
+      generate: false,
     } as LoadingState,
     deletingReportIds: new Set<string>(),
     downloadingReportIds: new Set<string>(),
@@ -44,7 +46,13 @@ export const useReportsStore = defineStore("reports", {
           pageToLoad,
           this.pageSize
         );
-        this.reports = reports;
+        // Convert metrics from string to string[] if needed
+        this.reports = reports.map((report) => ({
+          ...report,
+          metrics: Array.isArray(report.metrics)
+            ? report.metrics
+            : [report.metrics],
+        }));
         this.totalReports = total;
       } catch (err) {
         this.error =
@@ -97,6 +105,31 @@ export const useReportsStore = defineStore("reports", {
         console.error("Error downloading report:", err);
       } finally {
         this.downloadingReportIds.delete(reportId);
+      }
+    },
+
+    async generateReport(data: {
+      name: string;
+      timeRange: string;
+      models?: string[];
+      metrics: string[];
+      format: "csv" | "json" | "pdf";
+    }) {
+      try {
+        this.loading.generate = true;
+        this.error = null;
+        const report = await reportsApi.generate(data);
+        // Add the new report to our list
+        this.reports = [report, ...this.reports];
+        this.totalReports += 1;
+        return report;
+      } catch (err) {
+        this.error =
+          err instanceof Error ? err.message : "Failed to generate report";
+        console.error("Error generating report:", err);
+        throw err;
+      } finally {
+        this.loading.generate = false;
       }
     },
   },

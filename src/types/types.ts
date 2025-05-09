@@ -97,9 +97,10 @@ export interface Report {
   name: string;
   date: string;
   models: string[];
-  metrics: string;
+  metrics: string[];
   format: string;
   timeRange: string;
+  fileUrl?: string;
 }
 
 export interface ReportListResponse {
