@@ -48,10 +48,11 @@ export const useFilesStore = defineStore("files", {
           size: file.size.toString(),
         }));
         this.totalFiles = total;
-      } catch (err) {
+      } catch (error) {
         this.error =
-          err instanceof Error ? err.message : "Failed to load files";
-        console.error("Error loading files:", err);
+          error instanceof Error ? error.message : "Failed to load files";
+        console.error("Error loading files:", error);
+        throw error;
       } finally {
         this.loading.files = false;
       }
@@ -76,10 +77,11 @@ export const useFilesStore = defineStore("files", {
             tags: [],
           })),
         ];
-      } catch (err) {
+      } catch (error) {
         this.error =
-          err instanceof Error ? err.message : "Failed to upload files";
-        console.error("Error uploading files:", err);
+          error instanceof Error ? error.message : "Failed to upload files";
+        console.error("Error uploading files:", error);
+        throw error;
       } finally {
         this.loading.upload = false;
       }
@@ -92,10 +94,11 @@ export const useFilesStore = defineStore("files", {
         await filesApi.delete(fileId);
         // Remove the file from our list
         this.files = this.files.filter((file) => file.id !== fileId);
-      } catch (err) {
+      } catch (error) {
         this.error =
-          err instanceof Error ? err.message : "Failed to delete file";
-        console.error("Error deleting file:", err);
+          error instanceof Error ? error.message : "Failed to delete file";
+        console.error("Error deleting file:", error);
+        throw error;
       } finally {
         this.deletingFileIds.delete(fileId);
       }
@@ -116,10 +119,11 @@ export const useFilesStore = defineStore("files", {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-      } catch (err) {
+      } catch (error) {
         this.error =
-          err instanceof Error ? err.message : "Failed to download file";
-        console.error("Error downloading file:", err);
+          error instanceof Error ? error.message : "Failed to download file";
+        console.error("Error downloading file:", error);
+        throw error;
       } finally {
         this.downloadingFileIds.delete(fileId);
       }

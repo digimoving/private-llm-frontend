@@ -123,11 +123,11 @@ export const useReportsStore = defineStore("reports", {
         this.reports = [report, ...this.reports];
         this.totalReports += 1;
         return report;
-      } catch (err) {
+      } catch (error) {
         this.error =
-          err instanceof Error ? err.message : "Failed to generate report";
-        console.error("Error generating report:", err);
-        throw err;
+          error instanceof Error ? error.message : "Failed to generate report";
+        console.error("Error generating report:", error);
+        throw error;
       } finally {
         this.loading.generate = false;
       }
