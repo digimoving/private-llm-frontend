@@ -1,25 +1,22 @@
 <template>
   <nav class="bg-white border-b border-gray-200">
-    <div class="mx-5 px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <!-- Back Button -->
-        <Button
-          variant="icon"
-          :icon="ArrowLeftIcon"
-          @click="$router.push('/projects')"
-          aria-label="Back to Projects"
-        />
-
-        <!-- Project Title with Edit -->
-        <div class="flex items-center">
-          <div class="flex items-center">
-            <div
-              v-if="isLoading"
-              class="h-[18px] w-48 bg-gray-200 rounded-lg animate-pulse"
-            ></div>
+    <div
+      class="mx-2 sm:mx-5 px-2 sm:px-4 h-auto min-h-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 py-2 sm:py-0"
+    >
+      <div class="w-full my-3 sm:w-auto">
+        <div class="flex items-center min-w-0 w-full gap-2">
+          <!-- Back Button -->
+          <Button
+            variant="icon"
+            :icon="ArrowLeftIcon"
+            @click="$router.push('/projects')"
+            aria-label="Back to Projects"
+            class="flex-shrink-0"
+          />
+          <!-- Project Title -->
+          <template v-if="!isEditing">
             <h1
-              v-else-if="!isEditing"
-              class="text-xl font-semibold"
+              class="text-lg sm:text-xl font-semibold truncate flex-1 min-w-0"
               :class="[
                 projectStore.currentProject?.archived
                   ? 'text-gray-500'
@@ -39,24 +36,25 @@
               variant="icon"
               :icon="PencilSquareIcon"
               @click="startEditing"
-              class="ml-2"
+              class="ml-2 flex-shrink-0"
               aria-label="Edit Project Name"
             />
-          </div>
-          <div v-if="isEditing" class="flex items-center">
-            <Input
-              ref="titleInput"
-              v-model="editedTitle"
-              class="font-semibold text-gray-900"
-              @blur="saveTitle"
-              @keyup.esc="cancelEditing"
-            />
-          </div>
+          </template>
+          <!-- Editing Input -->
+          <Input
+            v-if="isEditing"
+            ref="titleInput"
+            v-model="editedTitle"
+            class="font-semibold text-gray-900 flex-1 min-w-0"
+            @blur="saveTitle"
+            @keyup.esc="cancelEditing"
+            @keyup.enter="saveTitle"
+          />
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex items-center gap-2">
+      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <Button
           variant="secondary"
           @click="toggleArchived"
@@ -66,12 +64,14 @@
               ? 'Unarchive Project'
               : 'Archive Project'
           "
+          class="text-red-700 border border-red-200 hover:bg-red-100"
         />
         <Button
           v-if="projectStore.currentProject?.archived"
           variant="danger"
           @click="$emit('delete')"
           text="Delete Project"
+          class="w-full sm:w-auto"
         />
       </div>
     </div>

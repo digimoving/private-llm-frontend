@@ -95,6 +95,7 @@
 
     <!-- Pagination -->
     <Pagination
+      v-if="pagination"
       :current-page="currentPage"
       :total-pages="Math.ceil((totalItems || items.length) / pageSize)"
       :page-size="pageSize"
@@ -123,6 +124,7 @@ interface Props {
   currentPage?: number;
   pageSize?: number;
   totalItems?: number;
+  pagination?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -80,18 +80,18 @@
           </Button>
         </div>
 
-        <!-- TODO: Mobile menu items -->
-        <!-- <div class="mt-3 space-y-1 px-2">
+        <!-- Mobile menu items -->
+        <div class="mt-3 space-y-1 px-2">
           <Button
             v-for="item in userMenuItems"
             :key="item.label"
             variant="flat"
             :icon="item.icon"
             :text="item.label"
-            class="flex w-full items-center rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+            class="flex w-full items-center rounded-md px-3 py-2 text-base text-white hover:bg-gray-700 hover:text-white"
             @click="item.onClick"
           />
-        </div> -->
+        </div>
       </div>
     </DisclosurePanel>
   </Disclosure>
@@ -108,7 +108,6 @@ import {
   XMarkIcon,
   UserIcon,
   CreditCardIcon,
-  MoonIcon,
   QuestionMarkCircleIcon,
   ArrowRightStartOnRectangleIcon,
 } from "@heroicons/vue/24/outline";
@@ -176,18 +175,14 @@ const userMenuItems = [
   {
     label: "Account Settings",
     icon: UserIcon,
-    onClick: () => console.log("Account Settings"),
+    onClick: () => router.push({ name: "account" }),
   },
   {
     label: "Billing",
     icon: CreditCardIcon,
-    onClick: () => console.log("Billing"),
+    onClick: () => router.push({ name: "billing" }),
   },
-  {
-    label: "Dark Mode",
-    icon: MoonIcon,
-    onClick: () => console.log("Dark Mode"),
-  },
+
   {
     label: "Help",
     icon: QuestionMarkCircleIcon,

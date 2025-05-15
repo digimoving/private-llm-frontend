@@ -6,7 +6,13 @@
     </p>
 
     <form @submit.prevent class="mt-4">
-      <div :class="[useGrid ? 'grid grid-cols-2 gap-4' : 'space-y-4']">
+      <div
+        :class="[
+          useGrid
+            ? 'grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4'
+            : 'space-y-4',
+        ]"
+      >
         <FormInput
           v-for="field in fields"
           :key="field.name"
@@ -17,7 +23,7 @@
           :helper-text="field.helperText"
           :options="field.options"
           :prefix="field.prefix"
-          :class="[field.type === 'textarea' ? 'col-span-2' : '']"
+          :class="['w-full', field.type === 'textarea' ? 'col-span-2' : '']"
         />
       </div>
     </form>

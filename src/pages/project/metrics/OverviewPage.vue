@@ -218,7 +218,7 @@ const tokensChartData = computed(() => {
   };
 });
 
-function barChartOptions(yLabel: string) {
+const barChartOptions = (yLabel: string) => {
   return {
     responsive: true,
     plugins: {
@@ -235,5 +235,5 @@ function barChartOptions(yLabel: string) {
       },
     },
   };
-}
+};
 </script>

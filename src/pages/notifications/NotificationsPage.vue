@@ -1,6 +1,6 @@
 <template>
   <div class="py-6">
-    <div class="mb-8 flex items-center justify-between">
+    <div class="sm:mb-8 flex items-center justify-between">
       <div class="flex space-x-1 rounded-lg bg-gray-100 p-1">
         <Button
           v-for="filter in filters"

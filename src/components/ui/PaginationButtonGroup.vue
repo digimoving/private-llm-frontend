@@ -59,10 +59,11 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: "pageChange", page: number): void }>();
 
-function goToPage(page: number) {
-  if (page < 1 || page > props.totalPages || page === props.currentPage) return;
-  emit("pageChange", page);
-}
+const goToPage = (page: number) => {
+  if (page >= 1 && page <= props.totalPages && page !== props.currentPage) {
+    emit("pageChange", page);
+  }
+};
 
 const paginationPages = computed<(number | string)[]>(() => {
   const total = props.totalPages;

@@ -17,7 +17,7 @@
       />
     </Switch>
     <SwitchLabel as="span" class="ml-3 text-sm">
-      <span class="font-medium text-gray-900">{{ label }}</span>
+      <span class="font-normal text-gray-900">{{ label }}</span>
       <span v-if="description" class="text-gray-500 ml-2">
         {{ description }}</span
       >

@@ -57,11 +57,11 @@
 import { computed, onMounted } from "vue";
 import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/vue/24/outline";
 import { useDateFormat } from "@vueuse/core";
-import Button from "./Button.vue";
-import Chip from "./Chip.vue";
+import Button from "../ui/Button.vue";
+import Chip from "../ui/Chip.vue";
 import FileIcon from "../files/FileIcon.vue";
 import { useFilesStore } from "../../stores/files";
-import Table from "./Table.vue";
+import Table from "../ui/Table.vue";
 
 const filesStore = useFilesStore();
 

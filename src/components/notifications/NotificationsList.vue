@@ -14,7 +14,7 @@
         class="relative"
       >
         <div
-          class="flex items-start justify-between p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
+          class="flex items-start justify-between p-4 bg-white rounded-lg shadow"
           :class="{ 'bg-gray-50': notification.read }"
         >
           <div class="flex items-start space-x-4">

@@ -44,7 +44,7 @@ import FormInput from "../ui/Input.vue";
 
 interface Props {
   modelValue: boolean;
-  projectName: string;
+  projectName?: string;
   title: string;
   description: string;
   primaryButtonText: string;
@@ -69,7 +69,9 @@ const inputText = ref("");
 const showError = ref(false);
 
 const confirmationText = computed(() => {
-  return props.projectName.toLowerCase().replace(/\s+/g, "-");
+  return props.projectName
+    ? props.projectName.toLowerCase().replace(/\s+/g, "-")
+    : "";
 });
 
 const handleConfirm = () => {
