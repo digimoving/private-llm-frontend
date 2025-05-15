@@ -1,5 +1,6 @@
 export const accountData = {
   billing: {
+    balance: 10.97,
     cards: [
       {
         id: "card_1",
@@ -18,6 +19,12 @@ export const accountData = {
         isDefault: false,
       },
     ],
+    autoRechargeEnabled: false,
+    autoRechargeSettings: {
+      rechargeAmount: 0,
+      triggerAmount: 0,
+      paymentMethodId: "",
+    },
     // Add other billing details as needed
   },
 };
