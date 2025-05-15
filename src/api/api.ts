@@ -15,6 +15,7 @@ import { useFileSize } from "../composables/useFileSize";
 import { mockLogs } from "./data/logs";
 import { mockMetrics } from "./data/metrics";
 import { accountData } from "./data/account";
+import { billing } from "./data/billing";
 
 // Simulated delay to mimic API calls
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -485,7 +486,7 @@ export const billingApi = {
   async get() {
     await delay(300);
     return Promise.resolve({
-      balance: 10.97,
+      balance: accountData.billing.balance,
       autoRechargeEnabled: false,
       cards: accountData.billing.cards,
     });
@@ -503,9 +504,15 @@ export const billingApi = {
       sources: [
         {
           amount: 100,
-          source: "promo",
+          source: "Welcome Credit",
           status: "active",
-          expires: "2024-12-31",
+          expires: "2025-12-31",
+        },
+        {
+          amount: 50,
+          source: "Referral",
+          status: "expired",
+          expires: "2025-04-21",
         },
       ],
     });
@@ -527,7 +534,17 @@ export const billingApi = {
     expiryYear: number;
   }) {
     await delay(500);
-    return Promise.resolve({ success: true });
+    // Create a new card object
+    const newCard = {
+      id: `card_${Date.now()}`,
+      brand: "visa", // or infer from cardNumber if you want
+      last4: data.cardNumber.slice(-4),
+      expMonth: String(data.expiryMonth).padStart(2, "0"),
+      expYear: String(data.expiryYear).padStart(2, "0"),
+      isDefault: false,
+    };
+    // Do NOT push to accountData.billing.cards here
+    return Promise.resolve({ card: newCard });
   },
 
   async deletePaymentMethod(methodId: string) {
@@ -542,18 +559,10 @@ export const billingApi = {
 
   async getHistory() {
     await delay(300);
-    return Promise.resolve([
-      {
-        invoiceName: "INV-001",
-        created: "2024-04-01T12:00:00Z",
-        cost: 50.0,
-        status: "paid",
-      },
-    ]);
+    return billing;
   },
 
   async downloadInvoice(invoiceId: string) {
-    await delay(300);
     return Promise.resolve(
       new Blob(["Mock invoice content"], { type: "application/pdf" })
     );
@@ -599,8 +608,9 @@ export const billingApi = {
     });
   },
 
-  async addBalance(data: { amount: number; paymentMethodId: string }) {
+  async addBalance({ amount }: { amount: number }) {
     await delay(500);
+    accountData.billing.balance += amount;
     return Promise.resolve({ success: true });
   },
 
@@ -610,12 +620,33 @@ export const billingApi = {
     paymentMethodId: string;
   }) {
     await delay(300);
-    return Promise.resolve({ success: true });
+    // Store the settings in the mock account data
+    accountData.billing.autoRechargeEnabled = true;
+    accountData.billing.autoRechargeSettings = {
+      rechargeAmount: data.rechargeAmount,
+      triggerAmount: data.triggerAmount,
+      paymentMethodId: data.paymentMethodId,
+    };
+    return Promise.resolve({
+      success: true,
+      autoRechargeEnabled: true,
+      autoRechargeSettings: accountData.billing.autoRechargeSettings,
+    });
   },
 
   async disableAutoRecharge() {
     await delay(300);
-    return Promise.resolve({ success: true });
+    accountData.billing.autoRechargeEnabled = false;
+    accountData.billing.autoRechargeSettings = {
+      rechargeAmount: 0,
+      triggerAmount: 0,
+      paymentMethodId: "",
+    };
+    return Promise.resolve({
+      success: true,
+      autoRechargeEnabled: false,
+      autoRechargeSettings: accountData.billing.autoRechargeSettings,
+    });
   },
 
   async getLimits() {
