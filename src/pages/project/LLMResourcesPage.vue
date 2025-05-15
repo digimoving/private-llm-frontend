@@ -1,7 +1,8 @@
 <!-- LLMResourcesPage.vue -->
 <template>
   <div class="space-y-8">
-    <div class="flex items-center justify-end gap-2">
+    <!-- Desktop Controls -->
+    <div class="hidden sm:flex items-center justify-end gap-2">
       <ToggleArchivedCheckbox v-model="showArchived" :disabled="isDisabled" />
       <FilterDropdown
         :show-archived="showArchived"
@@ -13,6 +14,32 @@
       <SortDropdown v-model="sortBy" :disabled="isDisabled" />
       <ListToggle v-model="showAsList" :disabled="isDisabled" />
     </div>
+
+    <!-- Mobile FAB -->
+    <FAB
+      :icon="FunnelIcon"
+      aria-label="Open project actions"
+      @click="showMobileDrawer = true"
+      customClass="sm:hidden"
+    />
+    <MobileProjectActionsDrawer
+      v-model="showMobileDrawer"
+      :show-as-list="showAsList"
+      :sort-by="sortBy"
+      :show-archived="showArchived"
+      :archived="projectStore.currentProject?.archived"
+      :archive-loading="isDisabled"
+      :tags="availableTags"
+      :status-options="statusOptions"
+      :disabled="isDisabled"
+      @update:filters="handleFiltersUpdate"
+      @update:sortBy="sortBy = $event"
+      @update:showArchived="showArchived = $event"
+      @update:showAsList="showAsList = $event"
+      @toggle-archive="toggleArchive"
+      @delete="handleDelete"
+      resource-type="LLM"
+    />
 
     <div class="relative min-h-[600px]">
       <ResourcesSkeletonLoader
@@ -56,31 +83,24 @@
       :resource-id="selectedLLMId"
       resource-type="LLM"
     />
-
-    <!-- TODO: Mobile Filters Dialog -->
-    <!-- <MobileFiltersDialog
-      v-model:viewMode="showAsList"
-      v-model:sortBy="sortBy"
-      v-model:showArchived="showArchived"
-      :disabled="llmsStore.isLoading"
-      @update:filters="handleFiltersUpdate"
-    /> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from "vue";
 import { useRoute } from "vue-router";
+import { FunnelIcon } from "@heroicons/vue/24/solid";
 import FilterDropdown from "../../components/controls/FilterDropdown.vue";
 import SortDropdown from "../../components/controls/SortDropdown.vue";
 import ToggleArchivedCheckbox from "../../components/controls/ToggleArchivedCheckbox.vue";
 import ListToggle from "../../components/controls/ListToggle.vue";
 import ResourcesContainer from "../../components/resources/ResourcesContainer.vue";
-// import MobileFiltersDialog from "../../components/controls/MobileFiltersDialog.vue";
+import MobileProjectActionsDrawer from "../../components/controls/MobileProjectActionsDrawer.vue";
 import ResourcesSkeletonLoader from "../../components/skeletons/ResourcesSkeletonLoader.vue";
 import ResourceDetailsModal from "../../components/modals/ResourceDetailsModal.vue";
 import ArchiveResourceModal from "../../components/modals/ArchiveResourceModal.vue";
 import DeleteResourceModal from "../../components/modals/DeleteResourceModal.vue";
+import FAB from "../../components/global/FAB.vue";
 import { useLLMsStore } from "../../stores/llms";
 import { useProjectsStore } from "../../stores/projects";
 import type { LLMResource, Project, LLMListParams } from "../../types/types";
@@ -113,6 +133,7 @@ const statusOptions = computed<NonNullable<LLMListParams["status"]>[]>(() => [
 
 const showArchived = ref(false);
 const showAsList = ref(false);
+const showMobileDrawer = ref(false);
 
 interface Filters {
   status: Array<NonNullable<LLMListParams["status"]>>;
@@ -217,4 +238,20 @@ watch([selectedFilters, sortBy], async () => {
                 : "newest",
   });
 });
+
+const toggleArchive = async () => {
+  if (projectStore.currentProject?.archived) {
+    await projectStore.updateProject(projectStore.currentProject.id, {
+      archived: false,
+    });
+  } else {
+    // Open archive modal or handle archive logic
+    // You may want to emit or set a modal state here
+  }
+};
+
+const handleDelete = () => {
+  // Open delete modal or handle delete logic
+  // You may want to emit or set a modal state here
+};
 </script>

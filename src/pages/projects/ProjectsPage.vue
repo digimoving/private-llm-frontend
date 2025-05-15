@@ -25,6 +25,28 @@
       </div>
     </div>
 
+    <!-- Mobile FAB -->
+    <FAB
+      :icon="FunnelIcon"
+      aria-label="Open project actions"
+      @click="showMobileDrawer = true"
+      customClass="sm:hidden"
+    />
+    <MobileProjectActionsDrawer
+      v-model="showMobileDrawer"
+      :show-as-list="showAsList"
+      :sort-by="sortBy"
+      :show-archived="showArchived"
+      :tags="availableTags"
+      :status-options="statusOptions"
+      :disabled="projectsStore.loading.projects"
+      @update:filters="handleFiltersUpdate"
+      @update:sortBy="sortBy = $event"
+      @update:showArchived="showArchived = $event"
+      @update:showAsList="showAsList = $event"
+      resource-type="project"
+    />
+
     <div class="relative min-h-[600px]">
       <ResourcesSkeletonLoader
         v-if="projectsStore.loading.projects"
@@ -69,26 +91,19 @@
       :resource-id="selectedProjectId"
       resource-type="Project"
     />
-
-    <!-- TODO: Mobile Filters Dialog -->
-    <!-- <MobileFiltersDialog
-      v-model:viewMode="showAsList"
-      v-model:sortBy="sortBy"
-      v-model:showArchived="showArchived"
-      :disabled="projectsStore.loading.projects"
-      @update:filters="handleFiltersUpdate"
-    /> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
+import { FunnelIcon } from "@heroicons/vue/24/solid";
+import FAB from "../../components/global/FAB.vue";
 import FilterDropdown from "../../components/controls/FilterDropdown.vue";
 import SortDropdown from "../../components/controls/SortDropdown.vue";
 import ToggleArchivedCheckbox from "../../components/controls/ToggleArchivedCheckbox.vue";
 import ListToggle from "../../components/controls/ListToggle.vue";
 import ResourcesContainer from "../../components/resources/ResourcesContainer.vue";
-import MobileFiltersDialog from "../../components/controls/MobileFiltersDialog.vue";
+import MobileProjectActionsDrawer from "../../components/controls/MobileProjectActionsDrawer.vue";
 import ResourcesSkeletonLoader from "../../components/skeletons/ResourcesSkeletonLoader.vue";
 import ResourceDetailsModal from "../../components/modals/ResourceDetailsModal.vue";
 import ArchiveResourceModal from "../../components/modals/ArchiveResourceModal.vue";
@@ -122,6 +137,7 @@ const sortBy = ref<
 
 const showArchived = ref(false);
 const showAsList = ref(false);
+const showMobileDrawer = ref(false);
 
 interface Filters {
   status: string[];
