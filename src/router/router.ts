@@ -28,6 +28,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import("../pages/billing/BillingPage.vue"),
         meta: { title: "Billing" },
       },
+      {
+        path: "account",
+        name: "account",
+        component: () => import("../pages/account/AccountSettingsPage.vue"),
+        meta: { title: "Account Settings" },
+      },
     ],
   },
   {
@@ -88,6 +94,12 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 ];
+
+// Add catch-all route for unknown paths
+routes.push({
+  path: "/:pathMatch(.*)*",
+  redirect: "/projects",
+});
 
 const router = createRouter({
   history: createWebHistory(),
